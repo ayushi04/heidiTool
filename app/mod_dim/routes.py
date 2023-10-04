@@ -1,9 +1,9 @@
 from flask import Blueprint, jsonify, request
 
-from app.mod_dim.createHeidi import readDataset
+from app.mod_dim.uploadHeidi import readDataset
 from app.mod_dim.helper.readDataset import ReadDatasetCls
-from app.mod_dim.createHeidi import saveMatrixToDB
-import app.mod_dim.fetch as fetch
+from app.mod_dim.uploadHeidi import saveMatrixToDB
+import app.mod_dim.database as database
 
 heidi_controller = Blueprint('heidi', __name__, url_prefix='/heidi')
 
@@ -29,7 +29,7 @@ def create_heidi_matrix_route():
     try:
         robj=ReadDatasetCls()
         robj.readDataset(datasetPath)
-        fetch.save_dataset_to_db(robj)
+        database.save_dataset_to_db(robj)
         data = saveMatrixToDB(robj)
         return jsonify({"data": data.to_dict(orient="records")}), 200
     except FileNotFoundError:

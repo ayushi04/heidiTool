@@ -7,6 +7,7 @@ class ReadDatasetCls:
     inputData=""
     row=""
     col=""
+    column_names = []
     feature_vector_dict=""
     classLabel_numeric=""
     class_label_dict=""
@@ -25,6 +26,9 @@ class ReadDatasetCls:
         t=self.feature_vector
         t['classLabel']=self.classLabel_numeric
         return t
+    
+    def getColumNames(self):
+        return self.column_names
 
     def getClassLabelDict(self):
         print('----READDATASET : getClassLabelDict----')
@@ -54,9 +58,10 @@ class ReadDatasetCls:
         logging.info('Reading dataset from path %s..',filepath)
         self.datapath=filepath
         try:
-            self.inputData=pd.read_csv(filepath_or_buffer=filepath,sep=',',index_col=None)
+            self.inputData=pd.read_csv(filepath_or_buffer=filepath,sep=',',index_col='id')
             self.row=self.inputData.shape[0]
             self.col=self.inputData.shape[1]
+            self.column_names = self.inputData.columns.to_list()[:-1]
             self.feature_vector_dict={}
             self.sep_fv_label(classlabel)
             logging.info('Read %s dataset sucessfully..' %(filepath))

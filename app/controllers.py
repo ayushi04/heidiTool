@@ -8,7 +8,7 @@ import os
 import pandas as pd
 from app.config import DevelopmentConfig as config
 from mod_datacleaning import data_cleaning
-from app.mod_dim.createHeidi import readDataset, saveMatrixToDB
+from app.mod_dim.uploadHeidi import readDataset, saveMatrixToDB, saveDatasetToDB
 
 import linecache
 import sys
@@ -120,6 +120,7 @@ def upload():
         download_path = 'static/uploads/' + filename
         
         robj = readDataset(download_path)
+        saveDatasetToDB(robj)
         saveMatrixToDB(robj, 10)
     
         #return render_template('success.html', download_path=download_path, user=current_user)

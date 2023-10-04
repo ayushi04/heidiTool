@@ -1,3 +1,4 @@
+import json
 from app import db
 from flask_login import UserMixin
 
@@ -85,19 +86,44 @@ class HeidiMatrix(db.Model, UserMixin):
 
     def __repr__(self):
         return "<heidi_matrix %s %s>" % (self.id, self.subspace)
+
+class Legend(db.Model, UserMixin):
+    __tablename__ = 'legend'
+    id = db.Column(db.Integer, primary_key=True)
+    dataset = db.Column(db.String(100),nullable=False)
+    subspace = db.Column(db.Integer, primary_key=True)
+    dimensions = db.Column(db.String)  # Use a text column to store the serialized list
+    
+    def set_dimensions(self, dimensions):
+        self.dimensions = json.dumps(dimensions)
+
+    def get_dimensions(self):
+        return json.loads(self.dimensions)
+    
+    
+    
     
 class Dataset(db.Model, UserMixin):
     __tablename__ = 'dataset'
     id = db.Column(db.Integer, primary_key=True)
     dataset = db.Column(db.String(100),nullable=False)
-    rows = db.Column(db.Integer,nullable=False)
-    cols = db.Column(db.Integer,nullable=False)
+    no_of_rows = db.Column(db.Integer,nullable=False)
+    no_of_cols = db.Column(db.Integer,nullable=False)
+    column_names_list = db.Column(db.String)  # Use a text column to store the serialized list
 
-    def __init__(self, dataset="", rows="", cols=""):
+    def __init__(self, dataset="", no_of_rows="", no_of_cols="", column_names_list=[]):
         self.dataset = dataset
-        self.rows = rows
-        self.cols = cols
-
+        self.no_of_rows = no_of_rows
+        self.no_of_cols = no_of_cols
+        print(column_names_list)
+        self.column_names_list = json.dumps(column_names_list)
+        
+    def set_column_names_list(self, column_names_list):
+        self.column_names_list = json.dumps(column_names_list)
+    
+    def get_column_names_list(self):
+        return json.loads(self.column_names_list)
+    
     def __repr__(self):
         return "<dataset %s %s>" % (self.id, self.dataset)
     

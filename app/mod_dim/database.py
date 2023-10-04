@@ -4,7 +4,7 @@
 
 from app import db
 from app.custom_exceptions import MyCustomException
-from models import HeidiMatrix, Dataset
+from models import HeidiMatrix, Dataset, Legend
 
 #CODE TO SAVE MATRIX TO DB
 def save_matrix_to_db(heidi_matrix,subspace, dataset):
@@ -54,7 +54,8 @@ def save_dataset_to_db(datasetObj):
     cols = datasetObj.getCol()
     try:
         # add new dataset to db
-        db.session.add(Dataset(dataset=datasetObj.getDatasetPath(), rows=rows, cols=cols))
+        print(datasetObj.getColumNames())
+        db.session.add(Dataset(dataset=datasetObj.getDatasetPath(), no_of_rows=rows, no_of_cols=cols, column_names_list = datasetObj.getColumNames()))
         db.session.commit()
         print('saved dataset to db')
     except Exception as e:
@@ -63,6 +64,39 @@ def save_dataset_to_db(datasetObj):
         print('failed to save dataset to db')
         raise MyCustomException('failed to save dataset to db')
     return True
+
+def delete_dataset_from_db(datasetName):
+    try:
+        Dataset.query.filter(Dataset.dataset == datasetName).delete()
+        db.session.commit()
+        print('removed %s from Dataset Table ' %(datasetName))
+    except Exception as e:
+        print(e)
+        db.session.rollback()
+        print('failed to remove %s from Dataset Table ' %(datasetName))
+        raise MyCustomException('failed to remove %s from Dataset Table ' %(datasetName))
+    return True
+
+def save_legend_to_db(legend, datasetObj):
+    datasetName = datasetObj.getDatasetPath()
+    try:
+        for key, value in legend.items():
+            db.session.add(Legend(dataset=datasetName, subspace = key, dimensions = value))
+        db.session.commit()
+        print('saved legend to db')
+    except Exception as e:
+        print(e)
+        db.session.rollback()
+        print('failed to save legend to db')
+        raise MyCustomException('failed to save legend to db')
+    return True
+
+        
+        
+    
+        
+    
+    
 
     
     
