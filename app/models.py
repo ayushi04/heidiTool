@@ -89,19 +89,20 @@ class HeidiMatrix(db.Model, UserMixin):
 
 class Legend(db.Model, UserMixin):
     __tablename__ = 'legend'
-    id = db.Column(db.Integer, primary_key=True)
-    dataset = db.Column(db.String(100),nullable=False)
-    subspace = db.Column(db.Integer, primary_key=True)
-    dimensions = db.Column(db.String)  # Use a text column to store the serialized list
+    dataset = db.Column(db.String(100), primary_key=True,nullable=False)
+    subspace = db.Column(db.Integer, primary_key=True,nullable=False)
+    dimensions = db.Column(db.String,nullable=False)  # Use a text column to store the serialized list
     
+    def __init__(self, dataset = "", subspace = "", dimensions = []):
+        self.dataset = dataset
+        self.subspace = subspace
+        self.dimensions = json.dumps(dimensions)
+        
     def set_dimensions(self, dimensions):
         self.dimensions = json.dumps(dimensions)
 
     def get_dimensions(self):
         return json.loads(self.dimensions)
-    
-    
-    
     
 class Dataset(db.Model, UserMixin):
     __tablename__ = 'dataset'
@@ -115,7 +116,6 @@ class Dataset(db.Model, UserMixin):
         self.dataset = dataset
         self.no_of_rows = no_of_rows
         self.no_of_cols = no_of_cols
-        print(column_names_list)
         self.column_names_list = json.dumps(column_names_list)
         
     def set_column_names_list(self, column_names_list):

@@ -3,8 +3,38 @@
 #and saving dataset to db
 
 from app import db
+import numpy as np
 from app.custom_exceptions import MyCustomException
 from models import HeidiMatrix, Dataset, Legend
+
+#CODE TO GET MATRIX FROM DB
+def get_matrix_from_db_for_subspace(datasetObj, subspace):
+    try:
+        heidi_matrix = np.zeros(shape=(datasetObj.getRow(),datasetObj.getRow()),dtype=np.uint64)    
+        matrix = HeidiMatrix.query.filter(HeidiMatrix.dataset == datasetObj.datapath, HeidiMatrix.subspace == subspace).all()
+        for row in matrix:
+            heidi_matrix[row.row_index][row.col_index] = row.value
+        print('got heidi matrix for subspace')
+        return heidi_matrix
+    except Exception as e:
+        print(e)
+        print('failed to get heidi matrix for subspace')
+        return False    
+    
+def get_bitvector_from_column_name_list(datasetObj, column_name_list):
+    try:
+        legend = Legend.query.filter(Legend.dataset == datasetObj.datapath and Legend.dimensions == len(column_name_list)).first()
+        if legend is None:
+            print('no legend found for dataset %s and dimensions %s' %(datasetObj.datapath, len(column_name_list)))
+            return False
+        subspace = legend.subspace
+        print('got subspace from legend')
+        return subspace
+    except Exception as e:
+        print(e)
+        print('failed to get subspace from legend')
+        return False
+        
 
 #CODE TO SAVE MATRIX TO DB
 def save_matrix_to_db(heidi_matrix,subspace, dataset):
@@ -54,7 +84,6 @@ def save_dataset_to_db(datasetObj):
     cols = datasetObj.getCol()
     try:
         # add new dataset to db
-        print(datasetObj.getColumNames())
         db.session.add(Dataset(dataset=datasetObj.getDatasetPath(), no_of_rows=rows, no_of_cols=cols, column_names_list = datasetObj.getColumNames()))
         db.session.commit()
         print('saved dataset to db')

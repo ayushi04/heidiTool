@@ -1,6 +1,6 @@
 import math
 from itertools import combinations
-
+from app.mod_dim.database import *
 
 def getAllSubspaces(dims):
     #the maximum number of subspaces is 2^dims
@@ -22,6 +22,12 @@ def getSubspaceListFromBitVector(subspace, col):
     subspace_col=[index for index,value in enumerate(bin_value) if value=='1']
     print ("%s : '%s'" %(subspace_col,bin_value[::-1]))
     return subspace_col
+
+def getColumnNameListFromBitVector(subspace, col, column_names_list):
+    subspace_indexes = getSubspaceListFromBitVector(subspace, col)
+    filtered_column_names = [column_names_list[i] for i in subspace_indexes]
+    return filtered_column_names
+    
 
 def subsets(s):
     t=[]

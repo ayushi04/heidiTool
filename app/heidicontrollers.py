@@ -1,6 +1,6 @@
 from flask import request, render_template, Blueprint, json, redirect, url_for, flash
 from app import db, login_manager
-from app.mod_dim.fetchHeidi import getHeidiMatrixForSubspaceList
+from app.mod_dim.fetchHeidi import *
 from app.mod_dim.helper.readDataset import ReadDatasetCls
 from models import User
 from werkzeug.security import generate_password_hash, check_password_hash
@@ -24,9 +24,11 @@ def heidi():
     orderDimensions = request.args.getlist('orderDimensions')
     
     datasetObj = ReadDatasetCls(datasetPath)
-    heidi_matrix = getHeidiMatrixForSubspaceList(dimensions, datasetObj)
+    heidi_matrix = getHeidiMatrixForListofSubsetofDimensions(dimensions, datasetObj)
     
-    return render_template('dimension.html',title='dimension Visualization',datasetPath=datasetPath,user=current_user)
+    return jsonify({'heidi_matrix': heidi_matrix.tolist()})
+    
+    # return render_template('dimension.html',title='dimension Visualization',datasetPath=datasetPath,user=current_user)
 
 
 

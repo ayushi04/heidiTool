@@ -1,8 +1,8 @@
 import pandas as pd
 import numpy as np
-from app.mod_dim.helper.common import getAllSubspaces, getSubspaceListFromBitVector
+from app.mod_dim.helper.common import getAllSubspaces, getSubspaceListFromBitVector, getColumnNameListFromBitVector
 from sklearn.neighbors import NearestNeighbors
-from app.mod_dim.database import save_matrix_to_db, remove_all_rows_with_dataset, save_dataset_to_db, delete_dataset_from_db, save_dataset_to_db
+from app.mod_dim.database import save_matrix_to_db, remove_all_rows_with_dataset, save_dataset_to_db, delete_dataset_from_db, save_dataset_to_db, save_legend_to_db
 from app.mod_dim.helper.readDataset import ReadDatasetCls
 
 #CODE TO CREATE HEIDI MATRIX FROM INPUT SUBSPACE AND KNN and save to database
@@ -38,17 +38,20 @@ def saveMatrixToDB(datasetObj, knn = 10):
     
     # Get list of all possible subspaces
     all_subspace = getAllSubspaces(datasetObj.getCol())
+    
     print("All possible subspaces are: ", all_subspace)
     
     #Get subspace map, key is subspace bit vector (String) and value is list of dimensions in that subspace
-    col = datasetObj.getCol()
+    legend = {}
     
     # For each subspace, save the matrix to the db.
     for subspace in all_subspace:
-        
-        subspace_col = getSubspaceListFromBitVector(subspace, col)
-        
+        subspace_col = getSubspaceListFromBitVector(subspace, datasetObj.getCol())
+        column_names = getColumnNameListFromBitVector(subspace, datasetObj.getCol(), datasetObj.getColumNames())
+        legend[subspace] = column_names
         saveMatrixToDBForSubspace(datasetObj, subspace, knn)
+    
+    saveLegendToDB(legend, datasetObj)
     
     # Print that the matrix is saved for all subspaces.
     print("Matrix saved for all subspaces")
@@ -57,6 +60,8 @@ def saveDatasetToDB(datasetObj):
     delete_dataset_from_db(datasetObj.getDatasetPath())
     save_dataset_to_db(datasetObj)
 
+def saveLegendToDB(legend, datasetObj):
+    save_legend_to_db(legend, datasetObj)
 
 def readDataset(datasetPath):
     #CODE TO READ DATASET
