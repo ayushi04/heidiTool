@@ -56,6 +56,7 @@ class ReadDatasetCls:
     def readDataset(self,filepath,classlabel="yes") :
         #print('classlabel',classlabel)
         logging.info('Reading dataset from path %s..',filepath)
+        print('Reading dataset from path %s..',filepath)
         self.datapath=filepath
         try:
             self.inputData=pd.read_csv(filepath_or_buffer=filepath,sep=',',index_col='id')

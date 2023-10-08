@@ -124,7 +124,9 @@ def upload():
         saveMatrixToDB(robj, 10)
         response_data = {
             'status': 'success',
+            'datasetPath': download_path,
             'url': '/columns',  # This should be the URL for the columns display page
+            
         }
         return jsonify(response_data)
     

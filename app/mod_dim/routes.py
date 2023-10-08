@@ -4,6 +4,8 @@ from app.mod_dim.uploadHeidi import readDataset
 from app.mod_dim.helper.readDataset import ReadDatasetCls
 from app.mod_dim.uploadHeidi import saveMatrixToDB
 import app.mod_dim.database as database
+from app.mod_dim.fetchHeidi import *
+
 
 heidi_controller = Blueprint('heidi', __name__, url_prefix='/heidi')
 
@@ -36,4 +38,14 @@ def create_heidi_matrix_route():
         return jsonify({"error": "File not found"}), 404
     except Exception as e:  
         return jsonify({"error": str(e)}), 500
+
+@heidi_controller.route('/columns', methods=['GET']) 
+def columns():
+    datasetPath=request.args.get('datasetPath')
+    print('Dataset path is ', datasetPath, 'in /columns api call')
+    # robj=ReadDatasetCls()
+    # robj.readDataset(datasetPath)
+    # columns = robj.getColumNames()
+    columns = getColumns(datasetPath)
+    return jsonify({'columns': columns})
 

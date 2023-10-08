@@ -4,12 +4,6 @@ import { Link } from 'react-router-dom'; // Assuming you're using React Router f
 function BaseLayout({ children }) {
   return (
     <div>
-      <head>
-        <title>Your Title</title>
-        {/* Add the Bootstrap CSS file */}
-        <link rel="stylesheet" href="/css/dist/bootstrap.min.css" />
-        {/* Add any other CSS files or stylesheets here */}
-      </head>
       <header>
         <nav className="navbar navbar-expand-lg navbar-inverse bg-primary bg-faded sticky-top">
           <button className="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">

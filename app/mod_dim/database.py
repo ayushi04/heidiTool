@@ -55,6 +55,19 @@ def save_matrix_to_db(heidi_matrix,subspace, dataset):
         raise MyCustomException('failed to save matrix to db for subspace : %s and dataset : %s' %(subspace, dataset))
     return True
 
+def get_columns(dataset):
+    try:
+        datasetObj = Dataset.query.filter(Dataset.dataset == dataset).first()
+        if datasetObj is None:
+            print('no dataset found with name %s' %(dataset))
+            return False
+        return datasetObj.get_column_names_list()
+    except Exception as e:
+        print(e)
+        print('failed to get columns for dataset %s' %(dataset))
+        return False
+
+
 def remove_all_rows_with_dataset(dataset):
     #for each row in heidi_matrix, remove all rows with dataset=dataset
     try:

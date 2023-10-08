@@ -1,7 +1,6 @@
 
 import numpy as np
 
-from app.models import HeidiMatrix
 from app.mod_dim.helper.readDataset import ReadDatasetCls 
 from app.mod_dim.database import *
 
@@ -42,5 +41,8 @@ def getHeidiMatrixForSubspace(subspace, datasetObj):
 
 def getBitVectorFromColumnNameList(datasetPath, column_name_list):
     return get_bitvector_from_column_name_list(datasetPath, column_name_list)
+
+def getColumns(datasetPath):
+    return get_columns(datasetPath)
     
     

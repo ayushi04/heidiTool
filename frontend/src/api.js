@@ -28,9 +28,7 @@ export const uploadFile = async (file, fixMethod) => {
 };
 
 export const fetchColumns = async (datasetPath) => {
-  const formData = new FormData();
-  formData.append('dataset', datasetPath);
-  const response = await axios.post(`${API_BASE_URL}/columns`, formData, {
+  const response = await axios.get(`${API_BASE_URL}/heidi/columns?datasetPath=${datasetPath}`, {
     headers: {
       'Content-Type': 'multipart/form-data',
     },

@@ -1,10 +1,12 @@
 import React, { useState } from 'react';
 import { uploadFile } from '../api'; // Import the API function
-import { useHistory } from 'react-router-dom';
+// import { useHistory } from 'react-router-dom';
+import { useNavigate } from "react-router-dom";
 
 
 function Home() {
-  const history = useHistory();
+  // const history = useHistory();
+  const navigate = useNavigate();
   const [file, setFile] = useState(null);
   const [fixMethod, setFixMethod] = useState('skip');
 
@@ -26,8 +28,11 @@ function Home() {
         // Handle the API response, e.g., display a success message
         if (result.status === 'success') {
           console.log('Upload success:', result);
+          const datasetPath = result.datasetPath;
           // Navigate to the columns display page
-          history.push('/columns'); // You need to import history from react-router-dom
+          // history.push(`/columns?datasetPath=${datasetPath}`); // You need to import history from react-router-dom
+          // history.push(`/columns`); // You need to import history from react-router-dom
+          navigate(`/columns?datasetPath=${datasetPath}`);
         } else {
           // Handle other cases
           console.error('Upload failed:', result.error);
