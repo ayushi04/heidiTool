@@ -1,3 +1,5 @@
+import axios from 'axios';
+
 const API_BASE_URL = 'http://localhost:8080'; // Replace with your actual API URL
 
 export const uploadFile = async (file, fixMethod) => {
@@ -6,14 +8,15 @@ export const uploadFile = async (file, fixMethod) => {
     formData.append('file', file);
     formData.append('fix', fixMethod);
 
-    const response = await fetch(`${API_BASE_URL}/upload`, {
-      method: 'POST',
-      body: formData,
+    const response = await axios.post(`${API_BASE_URL}/upload`, formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      },
     });
 
-    if (response.ok) {
+    if (response.status === 200) {
       // Handle successful response
-      return await response.json();
+      return response.data;
     } else {
       // Handle error response
       throw new Error('Upload failed');
@@ -23,3 +26,23 @@ export const uploadFile = async (file, fixMethod) => {
     throw error;
   }
 };
+
+export const fetchColumns = async (datasetPath) => {
+  const formData = new FormData();
+  formData.append('dataset', datasetPath);
+  const response = await axios.post(`${API_BASE_URL}/columns`, formData, {
+    headers: {
+      'Content-Type': 'multipart/form-data',
+    },
+  });
+
+  if (response.status === 200) {
+    // Handle successful response
+    return response.data;
+  } else {
+    // Handle error response
+    throw new Error('Upload failed');
+  }
+  
+};
+

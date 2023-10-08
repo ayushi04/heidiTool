@@ -117,7 +117,21 @@ def save_legend_to_db(legend, datasetObj):
         print(e)
         db.session.rollback()
         print('failed to save legend to db')
+        print('Legend input is : %s' %(legend))
         raise MyCustomException('failed to save legend to db')
+    return True
+
+def delete_legend_from_db(datasetObj):
+    datasetName = datasetObj.getDatasetPath()
+    try:
+        Legend.query.filter(Legend.dataset == datasetName).delete()
+        db.session.commit()
+        print('removed %s from Legend Table ' %(datasetName))
+    except Exception as e:
+        print(e)
+        db.session.rollback()
+        print('failed to remove %s from Legend Table ' %(datasetName))
+        raise MyCustomException('failed to remove %s from Legend Table ' %(datasetName))
     return True
 
         

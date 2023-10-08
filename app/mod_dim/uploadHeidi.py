@@ -2,7 +2,7 @@ import pandas as pd
 import numpy as np
 from app.mod_dim.helper.common import getAllSubspaces, getSubspaceListFromBitVector, getColumnNameListFromBitVector
 from sklearn.neighbors import NearestNeighbors
-from app.mod_dim.database import save_matrix_to_db, remove_all_rows_with_dataset, save_dataset_to_db, delete_dataset_from_db, save_dataset_to_db, save_legend_to_db
+from app.mod_dim.database import *
 from app.mod_dim.helper.readDataset import ReadDatasetCls
 
 #CODE TO CREATE HEIDI MATRIX FROM INPUT SUBSPACE AND KNN and save to database
@@ -51,6 +51,7 @@ def saveMatrixToDB(datasetObj, knn = 10):
         legend[subspace] = column_names
         saveMatrixToDBForSubspace(datasetObj, subspace, knn)
     
+    deleteLegendFromDB(datasetObj)
     saveLegendToDB(legend, datasetObj)
     
     # Print that the matrix is saved for all subspaces.
@@ -60,6 +61,9 @@ def saveDatasetToDB(datasetObj):
     delete_dataset_from_db(datasetObj.getDatasetPath())
     save_dataset_to_db(datasetObj)
 
+def deleteLegendFromDB(datasetObj):
+    delete_legend_from_db(datasetObj)
+    
 def saveLegendToDB(legend, datasetObj):
     save_legend_to_db(legend, datasetObj)
 

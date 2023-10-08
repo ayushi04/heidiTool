@@ -30,5 +30,11 @@ def heidi():
     
     # return render_template('dimension.html',title='dimension Visualization',datasetPath=datasetPath,user=current_user)
 
+@mod_heidicontrollers.route('/columns') 
+def columns():
+    datasetPath=request.args.get('datasetPath')
+    datasetObj = ReadDatasetCls(datasetPath)
+    columns = datasetObj.getColumNames()
+    return jsonify({'columns': columns})
 
 

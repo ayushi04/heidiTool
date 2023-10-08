@@ -3,7 +3,7 @@ import os
 class Config:
     DEBUG = True
     TESTING = False
-    PORT = 8083
+    PORT = 8080
     HOST = '0.0.0.0'
     BASE_DIR = os.getcwd()
     UPLOADS_DIR = os.path.join(BASE_DIR, 'static/uploads/')

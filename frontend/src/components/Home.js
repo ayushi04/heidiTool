@@ -1,8 +1,10 @@
 import React, { useState } from 'react';
 import { uploadFile } from '../api'; // Import the API function
+import { useHistory } from 'react-router-dom';
 
 
 function Home() {
+  const history = useHistory();
   const [file, setFile] = useState(null);
   const [fixMethod, setFixMethod] = useState('skip');
 
@@ -22,7 +24,14 @@ function Home() {
       if (file) {
         const result = await uploadFile(file, fixMethod);
         // Handle the API response, e.g., display a success message
-        console.log('Upload success:', result);
+        if (result.status === 'success') {
+          console.log('Upload success:', result);
+          // Navigate to the columns display page
+          history.push('/columns'); // You need to import history from react-router-dom
+        } else {
+          // Handle other cases
+          console.error('Upload failed:', result.error);
+        }
       } else {
         // Handle case where no file is selected
         console.error('No file selected');

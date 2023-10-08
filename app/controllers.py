@@ -9,7 +9,7 @@ import pandas as pd
 from app.config import DevelopmentConfig as config
 from mod_datacleaning import data_cleaning
 from app.mod_dim.uploadHeidi import readDataset, saveMatrixToDB, saveDatasetToDB
-
+from flask import jsonify
 import linecache
 import sys
 def PrintException():
@@ -122,9 +122,14 @@ def upload():
         robj = readDataset(download_path)
         saveDatasetToDB(robj)
         saveMatrixToDB(robj, 10)
+        response_data = {
+            'status': 'success',
+            'url': '/columns',  # This should be the URL for the columns display page
+        }
+        return jsonify(response_data)
     
-        #return render_template('success.html', download_path=download_path, user=current_user)
-        return render_template('first.html',title='visual tool',datasetPath=download_path, user=current_user)
+        # return render_template('success.html', download_path=download_path, user=current_user)
+        # return render_template('first.html',title='visual tool',datasetPath=download_path, user=current_user)
     except Exception as e:
         print(e)
         PrintException()
