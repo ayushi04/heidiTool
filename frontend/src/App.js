@@ -6,6 +6,7 @@ import BaseLayout from './components/BaseLayout'; // Import BaseLayout component
 import Home from './components/Home'; // Import Home component from the correct path
 import Contact from './components/Contact'; // Import Contact component from the correct path
 import ColumnsDisplay  from './components/ColumnsDisplay';
+import Heidi  from './components/Heidi';
 
 function App() {
   return (
@@ -15,6 +16,7 @@ function App() {
         <BaseLayout>
           <Routes>
             <Route path="/columns" element={<ColumnsDisplay />} />
+            <Route exact path="/heidi" element={<Heidi />} />
             <Route exact path="/" element={<Home />} />
             {/* <Route path="/contact" component={Contact} /> */}
             {/* Add more routes for other pages */}
