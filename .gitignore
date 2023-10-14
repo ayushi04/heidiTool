@@ -4,3 +4,6 @@ app.db
 app/app.db
 .DS_Store
 frontend/package-lock.json
+frontend/package-lock.json
+app/app.db
+app/app.db

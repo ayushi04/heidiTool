@@ -3,14 +3,14 @@ import { Container, Form, Button } from 'react-bootstrap';
 import { useLocation } from 'react-router-dom';
 import Select from 'react-select';
 import { fetchColumns } from '../api';
+import OrderingAlgorithmSelect from './OrderingAlgorithmSelect'; // Import the new component
+import SelectedDimensions from './SelectedDimensions';
 
 const Heidi = () => {
   // State
   const location = useLocation();
   const searchParams = new URLSearchParams(location.search);
   const datasetPath = searchParams.get('datasetPath');
-
-
 
   const [allPossibleDimensions, setAllPossibleDimensions] = useState([]);
   const [selectedDimensions, setSelectedDimensions] = useState([]);
@@ -41,22 +41,21 @@ const Heidi = () => {
     setDimensionCheckboxes({ ...dimensionCheckboxes, [name]: checked });
   };
 
+  const handleAlgorithmChange = (algorithm) => {
+    setSelectedOrderingAlgorithm(algorithm);
+  };
+
+  const handleDimensionsChange = (dimensions) => {
+    setSelectedDimensions(dimensions);
+  };
+
   // Handle form submission
   const handleSubmit = (e) => {
     e.preventDefault();
-    const selectedDims = Object.keys(dimensionCheckboxes).filter((dim) => dimensionCheckboxes[dim]);
-    setSelectedDimensions(selectedDims);
-    console.log('Selected Dimensions:', selectedDims);
+    console.log('Selected Dimensions:', selectedDimensions);
     console.log('Selected Ordering Algorithm:', selectedOrderingAlgorithm);
     console.log('Selected Ordering Dimensions:', selectedOrderingDimensions);
   };
-
-  // Ordering algorithm options
-  const allPossibleOrderingAlgorithm = ['Centroid Ordering', 'Option 2', 'Option 3', 'Option 4'];
-  const orderingAlgorithmOptions = allPossibleOrderingAlgorithm.map((option) => ({
-    value: option,
-    label: option,
-  }));
 
   return (
     <Container fluid>
@@ -65,15 +64,7 @@ const Heidi = () => {
           {/* Placeholder for the first column */}
         </div>
         <div style={{ flex: '0 0 30%', marginTop: 'auto', marginRight: '20px' }}>
-          <Form.Group>
-            <Form.Label>Ordering Algorithm</Form.Label>
-            <Select
-              isSearchable={false}
-              options={orderingAlgorithmOptions}
-              value={orderingAlgorithmOptions.find((option) => option.value === selectedOrderingAlgorithm)}
-              onChange={(selectedOption) => setSelectedOrderingAlgorithm(selectedOption.value)}
-            />
-          </Form.Group>
+           <OrderingAlgorithmSelect onOrderingAlgorithmChange={handleAlgorithmChange} s/>
         </div>
         <div style={{ flex: '0 0 30%', marginTop: 'auto' }}>
           <Form.Group>
@@ -100,18 +91,7 @@ const Heidi = () => {
       </div>
       <div style={{ marginTop: '20px' }}>
         <h4>Dimensions</h4>
-        <Form>
-          {allPossibleDimensions.map((dimension) => (
-            <Form.Check
-              key={dimension}
-              type="checkbox"
-              label={dimension}
-              name={dimension}
-              checked={dimensionCheckboxes[dimension]}
-              onChange={handleCheckboxChange}
-            />
-          ))}
-        </Form>
+          <SelectedDimensions allPossibleDimensions={allPossibleDimensions} onSelectedDimensionsChange={handleDimensionsChange} />
       </div>
     </Container>
   );
