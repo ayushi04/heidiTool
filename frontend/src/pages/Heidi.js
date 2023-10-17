@@ -3,22 +3,21 @@ import { Container, Form, Button } from 'react-bootstrap';
 import { useLocation } from 'react-router-dom';
 import Select from 'react-select';
 import { fetchColumns } from '../api';
-import OrderingAlgorithmSelect from './OrderingAlgorithmSelect'; // Import the new component
-import SelectedDimensions from './SelectedDimensions';
+import OrderingAlgorithmSelect from '../components/OrderingAlgorithmSelect'; // Import the new component
+import SelectedDimensions from '../components/SelectedDimensions';
+import OrderingDimensions from '../components/OrderingDimensions';
+import { getImage } from '../api'; // Import the API function
 
 const Heidi = () => {
   // State
   const location = useLocation();
   const searchParams = new URLSearchParams(location.search);
   const datasetPath = searchParams.get('datasetPath');
-
+  
   const [allPossibleDimensions, setAllPossibleDimensions] = useState([]);
+
+  const [result, setResult] = useState(null);
   const [selectedDimensions, setSelectedDimensions] = useState([]);
-  const defaultDimensions = allPossibleDimensions.reduce((checkboxes, dimension) => {
-    checkboxes[dimension] = false;
-    return checkboxes;
-  }, {});
-  const [dimensionCheckboxes, setDimensionCheckboxes] = useState(defaultDimensions);
   const [selectedOrderingAlgorithm, setSelectedOrderingAlgorithm] = useState('');
   const [selectedOrderingDimensions, setSelectedOrderingDimensions] = useState([]);
 
@@ -35,12 +34,6 @@ const Heidi = () => {
     loadColumns();
   }, [datasetPath]);
 
-  // Handle checkbox change
-  const handleCheckboxChange = (event) => {
-    const { name, checked } = event.target;
-    setDimensionCheckboxes({ ...dimensionCheckboxes, [name]: checked });
-  };
-
   const handleAlgorithmChange = (algorithm) => {
     setSelectedOrderingAlgorithm(algorithm);
   };
@@ -49,12 +42,32 @@ const Heidi = () => {
     setSelectedDimensions(dimensions);
   };
 
+  const handleOrderingDimensionsChange = (dimensions) => {
+    setSelectedOrderingDimensions(dimensions);
+  }
+
   // Handle form submission
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     console.log('Selected Dimensions:', selectedDimensions);
     console.log('Selected Ordering Algorithm:', selectedOrderingAlgorithm);
     console.log('Selected Ordering Dimensions:', selectedOrderingDimensions);
+    try {
+      const result = await getImage(datasetPath, selectedOrderingAlgorithm, selectedOrderingDimensions);
+      // Handle the API response, e.g., display a success message
+      if (result.status === 'success') {
+        console.log('Image fetched successfully:', result);
+        setResult(result);
+      } else {
+        // Handle other cases
+        console.error('Error fetching image for dataset: ', datasetPath, ' with ordering algorithm: ', selectedOrderingAlgorithm, ' and ordering dimensions: ', selectedOrderingDimensions);
+        console.error('Error: ', result.error);
+      }
+    } catch (error) {
+      // Handle API request errors, e.g., display an error message
+      console.error('Error fetching image for dataset: ', datasetPath, ' with ordering algorithm: ', selectedOrderingAlgorithm, ' and ordering dimensions: ', selectedOrderingDimensions);
+      console.error('Error: ', error);
+    }
   };
 
   return (
@@ -64,24 +77,10 @@ const Heidi = () => {
           {/* Placeholder for the first column */}
         </div>
         <div style={{ flex: '0 0 30%', marginTop: 'auto', marginRight: '20px' }}>
-           <OrderingAlgorithmSelect onOrderingAlgorithmChange={handleAlgorithmChange} s/>
+           <OrderingAlgorithmSelect onOrderingAlgorithmChange={handleAlgorithmChange} />
         </div>
         <div style={{ flex: '0 0 30%', marginTop: 'auto' }}>
-          <Form.Group>
-            <Form.Label>Ordering Dimensions</Form.Label>
-            <Select
-              isMulti
-              options={allPossibleDimensions.map((dimension) => ({
-                value: dimension,
-                label: dimension,
-              }))}
-              value={selectedOrderingDimensions.map((dimension) => ({
-                value: dimension,
-                label: dimension,
-              }))}
-              onChange={(selectedOptions) => setSelectedOrderingDimensions(selectedOptions.map((option) => option.value))}
-            />
-          </Form.Group>
+          <OrderingDimensions allPossibleDimensions={allPossibleDimensions} onOrderingDimensionsChange={handleOrderingDimensionsChange} />
         </div>
         <div style={{ flex: '0 0 20%', marginTop: 'auto', textAlign: 'right' }}>
           <Button variant="primary" type="submit" onClick={handleSubmit}>
@@ -89,9 +88,25 @@ const Heidi = () => {
           </Button>
         </div>
       </div>
-      <div style={{ marginTop: '20px' }}>
-        <h4>Dimensions</h4>
+      <div style={{ display: 'flex',  flexDirection: 'row', marginTop: '50px' }}>
+        <div style={{ flex: '0 0 20%' }}>
           <SelectedDimensions allPossibleDimensions={allPossibleDimensions} onSelectedDimensionsChange={handleDimensionsChange} />
+        </div>
+        <div style={{ flex: '0 0 80%' }}>
+          <div style={{ flex: '1', marginRight: '10px' }}>
+            {result && result.status === 'success' ? (
+              <img src={result.imageUrl} alt="Image" />
+            ) : (
+              <p>No image available. Please select options and submit.</p>
+            )
+            }
+          </div>
+          <div style={{ flex: '1' }}>
+            {result && result.status === 'success' ? (
+              <p>{result.legend}</p>
+            ) : null}
+          </div>
+        </div>
       </div>
     </Container>
   );

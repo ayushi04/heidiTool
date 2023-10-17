@@ -49,3 +49,16 @@ def columns():
     columns = getColumns(datasetPath)
     return jsonify({'columns': columns})
 
+@heidi_controller.route('/image', methods=['GET'])
+def heidi():
+    datasetPath=request.args.get('datasetPath')
+    #get list of dimensions from get request
+    orderingAlgorithm = request.args.getlist('orderingAlgorithm')
+    orderingDimensions = request.args.getlist('orderingDimensions')
+    
+    robj = ReadDatasetCls()
+    robj.readDataset(datasetPath)
+    heidi_matrix = getHeidiMatrixForListofSubsetofDimensions(orderingDimensions, robj)
+    print(heidi_matrix)
+    return jsonify({'heidi_matrix': heidi_matrix.tolist()})
+

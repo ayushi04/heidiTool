@@ -44,3 +44,20 @@ export const fetchColumns = async (datasetPath) => {
   
 };
 
+export const getImage = async (datasetPath, orderingAlgorithm, orderingDimensions) => {
+  const response = await axios.get(`${API_BASE_URL}/heidi/image?datasetPath=${datasetPath}&orderingAlgorithm=${orderingAlgorithm}&orderingDimensions=${orderingDimensions}`, {
+    headers: {
+      'Content-Type': 'multipart/form-data',
+    },
+  });
+
+  if (response.status === 200) {
+    // Handle successful response
+    return response.data;
+  } else {
+    // Handle error response
+    throw new Error('Upload failed');
+  }
+  
+}
+

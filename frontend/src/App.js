@@ -3,10 +3,10 @@ import React from 'react';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 // import './App.css';
 import BaseLayout from './components/BaseLayout'; // Import BaseLayout component from the correct path
-import Home from './components/Home'; // Import Home component from the correct path
+import Home from './pages/Home'; // Import Home component from the correct path
 import Contact from './components/Contact'; // Import Contact component from the correct path
 import ColumnsDisplay  from './components/ColumnsDisplay';
-import Heidi  from './components/Heidi';
+import Heidi  from './pages/Heidi';
 
 function App() {
   return (

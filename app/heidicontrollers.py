@@ -16,18 +16,18 @@ import matplotlib.pyplot as plt
 
 mod_heidicontrollers = Blueprint('heidicontrollers', __name__, url_prefix='/heidi')
 
-@mod_heidicontrollers.route('/heidi')
-def heidi():
-    datasetPath=request.args.get('datasetPath')
-    #get list of dimensions from get request
-    dimensions = request.args.getlist('dimensions')
-    orderDimensions = request.args.getlist('orderDimensions')
+# @mod_heidicontrollers.route('/heidi')
+# def heidi():
+#     datasetPath=request.args.get('datasetPath')
+#     #get list of dimensions from get request
+#     dimensions = request.args.getlist('dimensions')
+#     orderDimensions = request.args.getlist('orderDimensions')
     
-    datasetObj = ReadDatasetCls(datasetPath)
-    heidi_matrix = getHeidiMatrixForListofSubsetofDimensions(dimensions, datasetObj)
+#     datasetObj = ReadDatasetCls(datasetPath)
+#     heidi_matrix = getHeidiMatrixForListofSubsetofDimensions(dimensions, datasetObj)
     
-    return jsonify({'heidi_matrix': heidi_matrix.tolist()})
+#     return jsonify({'heidi_matrix': heidi_matrix.tolist()})
     
-    # return render_template('dimension.html',title='dimension Visualization',datasetPath=datasetPath,user=current_user)
+#     # return render_template('dimension.html',title='dimension Visualization',datasetPath=datasetPath,user=current_user)
 
 

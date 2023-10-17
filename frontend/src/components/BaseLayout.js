@@ -14,17 +14,17 @@ function BaseLayout({ children }) {
           <div className="collapse navbar-collapse" id="navbarSupportedContent">
             <ul className="navbar-nav ml-auto">
               <li className="nav-item">
-                <Link className="nav-link" to="/" activeClassName="active">Home</Link>
+                <Link className="nav-link" to="/">Home</Link>
               </li>
               <li className="nav-item">
-                <Link className="nav-link" to="/contact" activeClassName="active">Contact Us</Link>
+                <Link className="nav-link" to="/contact">Contact Us</Link>
               </li>
               {/* Add conditional rendering for user authentication */}
               <li className="nav-item">
-                <Link className="nav-link" to="/account" activeClassName="active">My Account</Link>
+                <Link className="nav-link" to="/account">My Account</Link>
               </li>
               <li className="nav-item">
-                <Link className="nav-link" to="/logout" activeClassName="active">Logout</Link>
+                <Link className="nav-link" to="/logout">Logout</Link>
               </li>
             </ul>
           </div>

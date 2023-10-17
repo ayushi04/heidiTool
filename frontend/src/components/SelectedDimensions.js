@@ -2,15 +2,19 @@ import React, { useState } from 'react';
 import { Form } from 'react-bootstrap';
 
 const SelectedDimensions = ({ allPossibleDimensions, onSelectedDimensionsChange }) => {
-  const [selectedDimensions, setSelectedDimensions] = useState([]);
+    const initialSelectedDimensions = allPossibleDimensions.reduce((checkboxes, dimension) => {
+    checkboxes[dimension] = false;
+    return checkboxes;
+    }, {});
+    const [selectedDimensions, setSelectedDimensions] = useState(initialSelectedDimensions);
 
-  const handleCheckboxChange = (event) => {
-    const { name, checked } = event.target;
-    const updatedSelection = { ...selectedDimensions, [name]: checked }
-    setSelectedDimensions(updatedSelection);
-    const selectedDims = Object.keys(updatedSelection).filter((dim) => updatedSelection[dim]);
-    onSelectedDimensionsChange(selectedDims);
-  };
+    const handleCheckboxChange = (event) => {
+        const { name, checked } = event.target;
+        const updatedSelection = { ...selectedDimensions, [name]: checked }
+        setSelectedDimensions(updatedSelection);
+        const selectedDims = Object.keys(updatedSelection).filter((dim) => updatedSelection[dim]);
+        onSelectedDimensionsChange(selectedDims);
+    };
 
   return (
     <div>

@@ -32,7 +32,7 @@ function Home() {
           // Navigate to the columns display page
           // history.push(`/columns?datasetPath=${datasetPath}`); // You need to import history from react-router-dom
           // history.push(`/columns`); // You need to import history from react-router-dom
-          navigate(`/columns?datasetPath=${datasetPath}`);
+          navigate(`/heidi?datasetPath=${datasetPath}`);
         } else {
           // Handle other cases
           console.error('Upload failed:', result.error);
