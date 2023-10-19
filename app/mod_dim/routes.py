@@ -1,10 +1,10 @@
 from flask import Blueprint, jsonify, request
 
-from app.mod_dim.uploadHeidi import readDataset
+from app.heidi.upload import readDataset
 from app.mod_dim.helper.readDataset import ReadDatasetCls
-from app.mod_dim.uploadHeidi import saveMatrixToDB
-import app.mod_dim.database as database
-from app.mod_dim.fetchHeidi import *
+from app.heidi.upload import saveMatrixToDB
+import app.heidi.database as database
+from app.heidi.fetch import *
 
 
 heidi_controller = Blueprint('heidi', __name__, url_prefix='/heidi')
@@ -55,10 +55,12 @@ def heidi():
     #get list of dimensions from get request
     orderingAlgorithm = request.args.getlist('orderingAlgorithm')
     orderingDimensions = request.args.getlist('orderingDimensions')
-    
+    selectedDimensions = request.args.getlist('selectedDimensions')
+    print('Dataset path is ', datasetPath, 'in /image api call', 'orderingAlgorithm is ', orderingAlgorithm, 'orderingDimensions is ', orderingDimensions, 'selectedDimensions is ', selectedDimensions)
     robj = ReadDatasetCls()
     robj.readDataset(datasetPath)
-    heidi_matrix = getHeidiMatrixForListofSubsetofDimensions(orderingDimensions, robj)
+    print('dataset read successfully')
+    heidi_matrix = getHeidiMatrixForListofSubsetofDimensions([selectedDimensions], robj)
     print(heidi_matrix)
     return jsonify({'heidi_matrix': heidi_matrix.tolist()})
 

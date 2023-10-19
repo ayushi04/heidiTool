@@ -1,6 +1,6 @@
 from flask import request, render_template, Blueprint, json, redirect, url_for, flash
 from app import db, login_manager
-from app.mod_dim.fetchHeidi import *
+from app.heidi.fetch import *
 from app.mod_dim.helper.readDataset import ReadDatasetCls
 from models import User
 from werkzeug.security import generate_password_hash, check_password_hash

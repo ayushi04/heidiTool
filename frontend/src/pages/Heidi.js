@@ -53,7 +53,7 @@ const Heidi = () => {
     console.log('Selected Ordering Algorithm:', selectedOrderingAlgorithm);
     console.log('Selected Ordering Dimensions:', selectedOrderingDimensions);
     try {
-      const result = await getImage(datasetPath, selectedOrderingAlgorithm, selectedOrderingDimensions);
+      const result = await getImage(datasetPath, selectedOrderingAlgorithm, selectedOrderingDimensions, selectedDimensions);
       // Handle the API response, e.g., display a success message
       if (result.status === 'success') {
         console.log('Image fetched successfully:', result);

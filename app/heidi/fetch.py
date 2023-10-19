@@ -2,7 +2,7 @@
 import numpy as np
 
 from app.mod_dim.helper.readDataset import ReadDatasetCls 
-from app.mod_dim.database import *
+from app.heidi.database import *
 
 #read matrix from db, create heidi matrix
 def getHeidiMatrixForListOfBitVectors(subspaceList, datasetObj):
@@ -30,7 +30,8 @@ def getHeidiMatrixForListofSubsetofDimensions(listOfSubsetofDimensions, datasetO
     for subsetofDimensions in listOfSubsetofDimensions:
         bit_vector = getBitVectorFromColumnNameList(datasetObj.getDatasetPath(), subsetofDimensions)
         bit_vectors = bit_vectors + [bit_vector]
-        
+    
+    print('bit vectors for subset of dimensions', listOfSubsetofDimensions, 'fetched from database is', bit_vectors)    
     heidi_matrix = getHeidiMatrixForListOfBitVectors(bit_vectors, datasetObj)
     print('heidi matrix for subset of dimensions', listOfSubsetofDimensions, 'fetched from database')
     return heidi_matrix    

@@ -2,7 +2,7 @@ import pandas as pd
 import numpy as np
 from app.mod_dim.helper.common import getAllSubspaces, getSubspaceListFromBitVector, getColumnNameListFromBitVector
 from sklearn.neighbors import NearestNeighbors
-from app.mod_dim.database import *
+from app.heidi.database import *
 from app.mod_dim.helper.readDataset import ReadDatasetCls
 
 #CODE TO CREATE HEIDI MATRIX FROM INPUT SUBSPACE AND KNN and save to database

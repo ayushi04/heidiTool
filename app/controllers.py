@@ -8,7 +8,7 @@ import os
 import pandas as pd
 from app.config import DevelopmentConfig as config
 from mod_datacleaning import data_cleaning
-from app.mod_dim.uploadHeidi import readDataset, saveMatrixToDB, saveDatasetToDB
+from app.heidi.upload import readDataset, saveMatrixToDB, saveDatasetToDB
 from flask import jsonify
 import linecache
 import sys

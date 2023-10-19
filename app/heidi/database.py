@@ -21,14 +21,16 @@ def get_matrix_from_db_for_subspace(datasetObj, subspace):
         print('failed to get heidi matrix for subspace')
         return False    
     
-def get_bitvector_from_column_name_list(datasetObj, column_name_list):
+def get_bitvector_from_column_name_list(datapath, column_name_list):
     try:
-        legend = Legend.query.filter(Legend.dataset == datasetObj.datapath and Legend.dimensions == len(column_name_list)).first()
+        print('Input column name list is ', column_name_list, 'datapath is ', datapath)
+        print( Legend.query.filter((Legend.dataset == datapath) &  (Legend.dimensions == str(column_name_list))))
+        legend = Legend.query.filter((Legend.dataset == datapath) &  (Legend.subspace == 4)).first()
         if legend is None:
-            print('no legend found for dataset %s and dimensions %s' %(datasetObj.datapath, len(column_name_list)))
+            print('no legend found for dataset %s and dimensions %s' %(datapath, column_name_list))
             return False
         subspace = legend.subspace
-        print('got subspace from legend')
+        print('got subspace(%s) from legend ' %(subspace))
         return subspace
     except Exception as e:
         print(e)

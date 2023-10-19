@@ -1,7 +1,9 @@
-# import sys
-# sys.path.insert(0, '/Users/ayushigupta/Desktop/github/tq/TOOL')
+import sys
+sys.path.append("/Users/ayushigupta/Desktop/github/tq/TOOL")
+# sys.path.append("/Users/ayushigupta/Desktop/github/tq/TOOL/app")
+# print(sys.path)
 
-#import matlab.engine
+#import matlab.engine 
 import os
 from app import app
 from app.config import DevelopmentConfig as config

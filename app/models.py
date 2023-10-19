@@ -98,11 +98,11 @@ class Legend(db.Model, UserMixin):
         self.subspace = subspace
         self.dimensions = json.dumps(dimensions)
         
-    def set_dimensions(self, dimensions):
-        self.dimensions = json.dumps(dimensions)
+    # def set_dimensions(self, dimensions):
+    #     self.dimensions = json.dumps(dimensions)
 
-    def get_dimensions(self):
-        return json.loads(self.dimensions)
+    # def get_dimensions(self):
+    #     return json.loads(self.dimensions)
     
 class Dataset(db.Model, UserMixin):
     __tablename__ = 'dataset'

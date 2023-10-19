@@ -1,6 +1,6 @@
 import math
 from itertools import combinations
-from app.mod_dim.database import *
+from app.heidi.database import *
 
 def getAllSubspaces(dims):
     #the maximum number of subspaces is 2^dims

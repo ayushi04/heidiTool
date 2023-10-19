@@ -44,8 +44,8 @@ export const fetchColumns = async (datasetPath) => {
   
 };
 
-export const getImage = async (datasetPath, orderingAlgorithm, orderingDimensions) => {
-  const response = await axios.get(`${API_BASE_URL}/heidi/image?datasetPath=${datasetPath}&orderingAlgorithm=${orderingAlgorithm}&orderingDimensions=${orderingDimensions}`, {
+export const getImage = async (datasetPath, orderingAlgorithm, orderingDimensions, selectedDimensions) => {
+  const response = await axios.get(`${API_BASE_URL}/heidi/image?datasetPath=${datasetPath}&orderingAlgorithm=${orderingAlgorithm}&orderingDimensions=${orderingDimensions}&selectedDimensions=${selectedDimensions}`, {
     headers: {
       'Content-Type': 'multipart/form-data',
     },
