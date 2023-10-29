@@ -1,17 +1,20 @@
 from flask import request, render_template, Blueprint, json, redirect, url_for, flash
 from app import db, login_manager
+from app.heidi.dataset.api import readDataset
 from models import User
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_login import login_required, login_user, current_user, logout_user
 import random
 import os
 import pandas as pd
-from app.config import DevelopmentConfig as config
+from config import DevelopmentConfig as config
 from mod_datacleaning import data_cleaning
-from app.heidi.upload import readDataset, saveMatrixToDB, saveDatasetToDB
+import app.heidi.api as hd
+import app.heidi.database.api as db
 from flask import jsonify
 import linecache
 import sys
+
 def PrintException():
     exc_type, exc_obj, tb = sys.exc_info()
     f = tb.tb_frame
@@ -120,8 +123,8 @@ def upload():
         download_path = 'static/uploads/' + filename
         
         robj = readDataset(download_path)
-        saveDatasetToDB(robj)
-        saveMatrixToDB(robj, 10)
+        db.saveDatasetToDB(download_path)
+        hd.createAndSaveMatrixToDB(download_path, 10)
         response_data = {
             'status': 'success',
             'datasetPath': download_path,

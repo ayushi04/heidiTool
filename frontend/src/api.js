@@ -29,6 +29,7 @@ export const uploadFile = async (file, fixMethod) => {
 
 export const fetchColumns = async (datasetPath) => {
   const response = await axios.get(`${API_BASE_URL}/heidi/columns?datasetPath=${datasetPath}`, {
+    
     headers: {
       'Content-Type': 'multipart/form-data',
     },
@@ -45,12 +46,17 @@ export const fetchColumns = async (datasetPath) => {
 };
 
 export const getImage = async (datasetPath, orderingAlgorithm, orderingDimensions, selectedDimensions) => {
-  const response = await axios.get(`${API_BASE_URL}/heidi/image?datasetPath=${datasetPath}&orderingAlgorithm=${orderingAlgorithm}&orderingDimensions=${orderingDimensions}&selectedDimensions=${selectedDimensions}`, {
-    headers: {
-      'Content-Type': 'multipart/form-data',
-    },
+  // const response = await axios.get(`${API_BASE_URL}/heidi/image?datasetPath=${datasetPath}&orderingAlgorithm=${orderingAlgorithm}&orderingDimensions=${orderingDimensions}&selectedDimensions=${selectedDimensions}`, {
+  //   headers: {
+  //     'Content-Type': 'multipart/form-data',
+  //   },
+  // });
+  const response = await axios.post(`${API_BASE_URL}/heidi/image`, {
+    datasetPath,
+    orderingAlgorithm,
+    orderingDimensions,
+    selectedDimensions,
   });
-
   if (response.status === 200) {
     // Handle successful response
     return response.data;

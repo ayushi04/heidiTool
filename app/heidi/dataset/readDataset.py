@@ -16,7 +16,7 @@ class ReadDatasetCls:
     def getRow(self):
         return int(self.row)
 
-    def getCol(self):
+    def getNumberOfCols(self):
         return int(self.col)
     
     def getFeatureVector(self):

@@ -16,6 +16,7 @@ const Heidi = () => {
   
   const [allPossibleDimensions, setAllPossibleDimensions] = useState([]);
 
+  const [imageSrc, setImageSrc] = useState(null);
   const [result, setResult] = useState(null);
   const [selectedDimensions, setSelectedDimensions] = useState([]);
   const [selectedOrderingAlgorithm, setSelectedOrderingAlgorithm] = useState('');
@@ -54,10 +55,19 @@ const Heidi = () => {
     console.log('Selected Ordering Dimensions:', selectedOrderingDimensions);
     try {
       const result = await getImage(datasetPath, selectedOrderingAlgorithm, selectedOrderingDimensions, selectedDimensions);
+      setResult(result);
       // Handle the API response, e.g., display a success message
       if (result.status === 'success') {
         console.log('Image fetched successfully:', result);
-        setResult(result);
+        const imgData = result.consolidated_image.data;
+        const contentType = result.consolidated_image.content_type;
+
+        // Create a data URL with the decoded base64 image data
+        const dataUrl = `data:${contentType};base64,${imgData}`;
+
+        // Set the data URL as the image source
+        // setImageSrc(dataUrl);
+        setImageSrc(dataUrl);
       } else {
         // Handle other cases
         console.error('Error fetching image for dataset: ', datasetPath, ' with ordering algorithm: ', selectedOrderingAlgorithm, ' and ordering dimensions: ', selectedOrderingDimensions);
@@ -95,15 +105,15 @@ const Heidi = () => {
         <div style={{ flex: '0 0 80%' }}>
           <div style={{ flex: '1', marginRight: '10px' }}>
             {result && result.status === 'success' ? (
-              <img src={result.imageUrl} alt="Image" />
+              <img src={imageSrc} alt="Image" />
             ) : (
               <p>No image available. Please select options and submit.</p>
             )
             }
           </div>
           <div style={{ flex: '1' }}>
-            {result && result.status === 'success' ? (
-              <p>{result.legend}</p>
+            {imageSrc && imageSrc.status === 'success' ? (
+              <p>{imageSrc.legend}</p>
             ) : null}
           </div>
         </div>

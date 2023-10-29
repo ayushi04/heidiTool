@@ -92,17 +92,13 @@ class Legend(db.Model, UserMixin):
     dataset = db.Column(db.String(100), primary_key=True,nullable=False)
     subspace = db.Column(db.Integer, primary_key=True,nullable=False)
     dimensions = db.Column(db.String,nullable=False)  # Use a text column to store the serialized list
+    color = db.Column(db.String,nullable=False)
     
-    def __init__(self, dataset = "", subspace = "", dimensions = []):
+    def __init__(self, dataset = "", subspace = "", dimensions = [], color = ""):
         self.dataset = dataset
         self.subspace = subspace
         self.dimensions = json.dumps(dimensions)
-        
-    # def set_dimensions(self, dimensions):
-    #     self.dimensions = json.dumps(dimensions)
-
-    # def get_dimensions(self):
-    #     return json.loads(self.dimensions)
+        self.color = json.dumps(color)
     
 class Dataset(db.Model, UserMixin):
     __tablename__ = 'dataset'

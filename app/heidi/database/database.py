@@ -2,43 +2,85 @@
 #like saving matrix to db, removing all rows with dataset, getting heidi matrix for subspace
 #and saving dataset to db
 
+import json
+import ast
+import pandas as pd
 from app import db
 import numpy as np
-from app.custom_exceptions import MyCustomException
+from custom_exceptions import MyCustomException
 from models import HeidiMatrix, Dataset, Legend
 
-#CODE TO GET MATRIX FROM DB
-def get_matrix_from_db_for_subspace(datasetObj, subspace):
+
+def get_legend(datasetPath):
     try:
-        heidi_matrix = np.zeros(shape=(datasetObj.getRow(),datasetObj.getRow()),dtype=np.uint64)    
-        matrix = HeidiMatrix.query.filter(HeidiMatrix.dataset == datasetObj.datapath, HeidiMatrix.subspace == subspace).all()
+        legend = Legend.query.filter(Legend.dataset == datasetPath).all()
+        legend_data = [
+            {'dataset': item.dataset, 'subspace': item.subspace,
+             'dimensions': json.loads(item.dimensions), 'color': json.loads(item.color)}
+            for item in legend
+        ]
+        df = pd.DataFrame(legend_data)
+        # df['color'] = [list(i) for i in df['color']]
+        # df['dimensions'] = [list(i) for i in df['dimensions']]
+        print('got legend from db')
+        return df
+    except Exception as e:
+        print(e)
+        print('failed to get legend from db')
+        return False
+    
+    
+#CODE TO GET MATRIX FROM DB
+def get_matrix_from_db_for_bit_vector(datapath, row, subspace):
+    heidi_matrix = np.zeros(shape=(row, row),dtype=np.uint64)    
+    print('Input of get_matrix_from_db_for_subspace is ', datapath, 'and subspace is ', subspace )
+    try:
+        matrix = HeidiMatrix.query.filter(HeidiMatrix.dataset == datapath, HeidiMatrix.subspace == subspace).all()
         for row in matrix:
-            heidi_matrix[row.row_index][row.col_index] = row.value
-        print('got heidi matrix for subspace')
+            heidi_matrix[row.row_index][row.col_index] = int(row.value)
+        # print('Created heidi matrix for subspace')
         return heidi_matrix
     except Exception as e:
         print(e)
         print('failed to get heidi matrix for subspace')
         return False    
     
-def get_bitvector_from_column_name_list(datapath, column_name_list):
+# checked
+# Subspace is - column name list
+# Data fetched from Table - Legend
+# not to be called outside this file
+# checked
+def get_bit_vector_for_subspace(datapath, subspace):
     try:
-        print('Input column name list is ', column_name_list, 'datapath is ', datapath)
-        print( Legend.query.filter((Legend.dataset == datapath) &  (Legend.dimensions == str(column_name_list))))
-        legend = Legend.query.filter((Legend.dataset == datapath) &  (Legend.subspace == 4)).first()
+        # print('Input column name list is ', subspace, 'datapath is ', datapath)
+        # column_name_string = ', '.join(column_name_list)
+        column_name_string = json.dumps(subspace)
+        # print( Legend.query.filter((Legend.dataset == datapath) &  (Legend.dimensions == column_name_string)))
+        legend = Legend.query.filter((Legend.dataset == datapath) &  (Legend.dimensions == column_name_string)).first()
         if legend is None:
-            print('no legend found for dataset %s and dimensions %s' %(datapath, column_name_list))
+            print('no legend found for dataset %s and dimensions %s' %(datapath, column_name_string))
             return False
-        subspace = legend.subspace
-        print('got subspace(%s) from legend ' %(subspace))
-        return subspace
+        bitVector = legend.subspace
+        # print('Fetched bitvector(%s) from database (legend table) for subspace(%s)' %(bitVector, column_name_string))
+        return bitVector
     except Exception as e:
         print(e)
-        print('failed to get subspace from legend')
-        return False
-        
-
-#CODE TO SAVE MATRIX TO DB
+        print('Failed to get bitvector from legend for subspace(%s)' %(column_name_string))
+        raise MyCustomException('Failed to get bitvector from legend for subspace: %s' %(column_name_string))
+      
+# checked
+"""        
+CODE TO SAVE MATRIX TO DB
+Input:- 
+subspace - 7 
+matrix - [[1 0 0 ... 0 0 0]
+ [0 1 1 ... 0 0 0]
+ [0 0 1 ... 0 0 0]
+ ...
+ [0 0 0 ... 1 0 0]
+ [0 0 0 ... 1 1 1]
+ [0 0 0 ... 0 0 1]]
+"""
 def save_matrix_to_db(heidi_matrix,subspace, dataset):
     #for input matrix, get all tuple of row and column points, and their corresponding values
     #save these tuples, subspace and value to db where value is non-zero
@@ -47,9 +89,8 @@ def save_matrix_to_db(heidi_matrix,subspace, dataset):
             for j, value in enumerate(row):
                 if value != 0:
                     # Insert the data into the table
-                    db.session.add(HeidiMatrix(subspace=subspace, row_index=i, col_index=j, dataset=dataset, value=value))
+                    db.session.add(HeidiMatrix(subspace=subspace, row_index=i, col_index=j, dataset=dataset, value=int(value)))
         db.session.commit()
-        print('saved matrix to db')
     except Exception as e:
         print(e)
         db.session.rollback()
@@ -83,20 +124,20 @@ def remove_all_rows_with_dataset(dataset):
         raise MyCustomException('failed to remove all rows with dataset(%s)' %(dataset))
     return True
 
-def get_heidi_matrix_for_subspace(dataset, subspace):
-    try:
-        heidi_matrix = HeidiMatrix.query.filter(HeidiMatrix.dataset == dataset, HeidiMatrix.subspace == subspace).all()
-        print('got heidi matrix for subspace')
-    except Exception as e:
-        print(e)
-        db.session.rollback()
-        print('failed to get heidi matrix for subspace')
-        return False
-    return heidi_matrix
+# def get_heidi_matrix_for_subspace(dataset, subspace):
+#     try:
+#         heidi_matrix = HeidiMatrix.query.filter(HeidiMatrix.dataset == dataset, HeidiMatrix.subspace == subspace).all()
+#         print('got heidi matrix for subspace')
+#     except Exception as e:
+#         print(e)
+#         db.session.rollback()
+#         print('failed to get heidi matrix for subspace')
+#         return False
+#     return heidi_matrix
 
 def save_dataset_to_db(datasetObj):
     rows = datasetObj.getRow()
-    cols = datasetObj.getCol()
+    cols = datasetObj.getNumberOfCols()
     try:
         # add new dataset to db
         db.session.add(Dataset(dataset=datasetObj.getDatasetPath(), no_of_rows=rows, no_of_cols=cols, column_names_list = datasetObj.getColumNames()))
@@ -125,7 +166,9 @@ def save_legend_to_db(legend, datasetObj):
     datasetName = datasetObj.getDatasetPath()
     try:
         for key, value in legend.items():
-            db.session.add(Legend(dataset=datasetName, subspace = key, dimensions = value))
+            # value ', '.join(value)
+            # print('Key is %s and value is %s, %s' %(key, value[0], value[1]))
+            db.session.add(Legend(dataset=datasetName, subspace = key, dimensions = value[0], color = value[1]))
         db.session.commit()
         print('saved legend to db')
     except Exception as e:
@@ -148,6 +191,8 @@ def delete_legend_from_db(datasetObj):
         print('failed to remove %s from Legend Table ' %(datasetName))
         raise MyCustomException('failed to remove %s from Legend Table ' %(datasetName))
     return True
+
+
 
         
         

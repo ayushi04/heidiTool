@@ -1,10 +1,11 @@
-from flask import Blueprint, jsonify, request
+from flask import Blueprint, jsonify, request, Response
 
-from app.heidi.upload import readDataset
-from app.mod_dim.helper.readDataset import ReadDatasetCls
-from app.heidi.upload import saveMatrixToDB
-import app.heidi.database as database
-from app.heidi.fetch import *
+from app.heidi.dataset.api import readDataset
+from app.heidi.database.api import saveMatrixToDB, saveDatasetToDB, getHeidiMatrixForSubspaceList, getColumns
+import app.heidi.api as hd
+
+import io
+import base64
 
 
 heidi_controller = Blueprint('heidi', __name__, url_prefix='/heidi')
@@ -29,9 +30,8 @@ def create_heidi_matrix_route():
     if not datasetPath:
         return jsonify({"error": "Dataset path is missing"}), 400
     try:
-        robj=ReadDatasetCls()
-        robj.readDataset(datasetPath)
-        database.save_dataset_to_db(robj)
+        robj=readDataset(datasetPath)
+        saveDatasetToDB(robj)
         data = saveMatrixToDB(robj)
         return jsonify({"data": data.to_dict(orient="records")}), 200
     except FileNotFoundError:
@@ -43,24 +43,42 @@ def create_heidi_matrix_route():
 def columns():
     datasetPath=request.args.get('datasetPath')
     print('Dataset path is ', datasetPath, 'in /columns api call')
-    # robj=ReadDatasetCls()
-    # robj.readDataset(datasetPath)
-    # columns = robj.getColumNames()
     columns = getColumns(datasetPath)
     return jsonify({'columns': columns})
 
-@heidi_controller.route('/image', methods=['GET'])
+@heidi_controller.route('/image', methods=['POST'])
 def heidi():
-    datasetPath=request.args.get('datasetPath')
-    #get list of dimensions from get request
-    orderingAlgorithm = request.args.getlist('orderingAlgorithm')
-    orderingDimensions = request.args.getlist('orderingDimensions')
-    selectedDimensions = request.args.getlist('selectedDimensions')
+    # datasetPath=request.args.get('datasetPath')
+    # #get list of dimensions from get request
+    # orderingAlgorithm = request.args.get('orderingAlgorithm')
+    # orderingDimensions = request.args.getlist('orderingDimensions')
+    # selectedDimensions = request.args.getlist('selectedDimensions')
+    
+    data = request.get_json()
+    datasetPath = data.get('datasetPath')
+    orderingAlgorithm = data.get('orderingAlgorithm')
+    orderingDimensions = data.get('orderingDimensions', [])  # This will be a list of strings
+    selectedDimensions = data.get('selectedDimensions', [])  # This will also be a list of strings
+
+
     print('Dataset path is ', datasetPath, 'in /image api call', 'orderingAlgorithm is ', orderingAlgorithm, 'orderingDimensions is ', orderingDimensions, 'selectedDimensions is ', selectedDimensions)
-    robj = ReadDatasetCls()
-    robj.readDataset(datasetPath)
-    print('dataset read successfully')
-    heidi_matrix = getHeidiMatrixForListofSubsetofDimensions([selectedDimensions], robj)
-    print(heidi_matrix)
-    return jsonify({'heidi_matrix': heidi_matrix.tolist()})
+    img = hd.getImage(datasetPath, selectedDimensions, orderingDimensions, orderingAlgorithm)
+    
+    # heidi_matrix = getHeidiMatrixForSubspaceList([selectedDimensions], datasetPath)
+    
+    # Convert the PIL image to bytes
+    img_bytes = io.BytesIO()
+    img.save(img_bytes, format='PNG')
+    img_bytes = img_bytes.getvalue()
+    
+    response_data = {
+        'status': 'success',
+        'consolidated_image': {
+            'data': base64.b64encode(img_bytes).decode('utf-8'),
+            'content_type': 'image/png'
+        }
+    }
+
+    
+    return jsonify(response_data)
 
