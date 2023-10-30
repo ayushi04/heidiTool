@@ -3,6 +3,7 @@ import app.heidi.database.api as db
 import app.heidi.subspace.api as sb
 import app.heidi.dataset.api as ds
 import app.heidi.matrix.api as mx
+import app.heidi.order.api as op
 
 def createAndSaveMatrixToDB(datasetPath, knn=10):
     datasetObj = ds.readDataset(datasetPath)
@@ -13,6 +14,7 @@ def createAndSaveMatrixToDB(datasetPath, knn=10):
     
     #2. For each subspace, create matrix and legend
     heidi_matrix_map = mx.createMatrix(datasetObj, all_subspace, knn)
+    
     #Get subspace map, key is subspace bit vector (String) and value is list of dimensions in that subspace
     legend = mx.createLegend(datasetObj)
     print('matrix and legend created suuccesfully')
@@ -28,6 +30,18 @@ def getImage(datasetPath, selectedDimensions, orderingDimensions, orderingAlgori
     subspaceList = [selectedDimensions]
     matrix_map = db.getHeidiMatrixForSubspaceList([selectedDimensions], datasetPath) # returns :- {('sl', 'sw'): array([[1, 0, 0, ..., 0, 0, 0],
     bitvector_map = db.getBitVectorMap(datasetPath, subspaceList) # returns :- {('sl', 'sw'): 3}
+    
+    
+    # #CODE TO SORT DATASET
+    # sorted_data = op.orderDataset(datasetPath, orderingDimensions, orderingAlgorithm)    
+    # print('sorted data is \n', sorted_data)
+    # print('Data sorted successfully')    
+    
+    #CODE TO ORDER MATRIX BASED ON SORTED DATA
+    original_order, new_order = op.getNewOrder(datasetPath, orderingDimensions, orderingAlgorithm)
+    matrix_map = mx.orderMatrix(matrix_map, new_order, original_order)
+    
+        
     legend = db.getLegend(datasetPath) 
     
     print('\t Legend fetched from database', legend)

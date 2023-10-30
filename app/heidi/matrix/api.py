@@ -16,3 +16,6 @@ def createImage(matrix_map, legend):
 
 def consolidateImage(image_map):
     return image.consolidateImage(image_map)
+
+def orderMatrix(matrix_map, new_order, original_order):
+    return matrix.orderMatrix(matrix_map, new_order, original_order)

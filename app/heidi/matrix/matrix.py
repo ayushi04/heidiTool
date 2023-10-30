@@ -44,3 +44,19 @@ def createMatrixForSubspace(datasetObj, subspace, knn = 10) :
     heidi_matrix=heidi_matrix.astype(np.uint64)
     return heidi_matrix
     
+def orderMatrix(matrix_map, new_order, original_order):
+    new_matrix_map = {}
+    for subspace in matrix_map:
+        matrix = matrix_map[subspace] 
+        new_matrix = np.zeros((matrix.shape[0],matrix.shape[0]))
+
+        #code to reshuffle matrix with order = original_order to updated value defined in sort_map
+        for i in range(matrix.shape[0]):
+            for j in range(matrix.shape[0]):
+                row = original_order.index(new_order[i]) #  finds the index of the new_order[i] element in the original_order list. 
+                col = original_order.index(new_order[j])
+                new_matrix[i][j] = matrix[row][col]
+        new_matrix_map[subspace] = new_matrix
+
+    return new_matrix_map
+        

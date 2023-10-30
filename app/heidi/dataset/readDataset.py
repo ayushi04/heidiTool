@@ -25,6 +25,7 @@ class ReadDatasetCls:
     def getInputData(self):
         t=self.feature_vector
         t['classLabel']=self.classLabel_numeric
+        # t.columns = [str(col) for col in t.columns]
         return t
     
     def getColumNames(self):
