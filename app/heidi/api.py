@@ -28,8 +28,11 @@ def createAndSaveMatrixToDB(datasetPath, knn=10):
     
 def getImage(datasetPath, selectedDimensions, orderingDimensions, orderingAlgorithm):
     subspaceList = [selectedDimensions]
-    matrix_map = db.getHeidiMatrixForSubspaceList([selectedDimensions], datasetPath) # returns :- {('sl', 'sw'): array([[1, 0, 0, ..., 0, 0, 0],
-    bitvector_map = db.getBitVectorMap(datasetPath, subspaceList) # returns :- {('sl', 'sw'): 3}
+    allSubspacesList = sb.getAllSubspacesFromSelectedDimensionSet(selectedDimensions)
+    print('allSubspaces are : %s for input selected dimesions : %s' %(allSubspacesList, selectedDimensions))
+    
+    matrix_map = db.getHeidiMatrixForSubspaceList(allSubspacesList, datasetPath) # returns :- {('sl', 'sw'): array([[1, 0, 0, ..., 0, 0, 0],
+    bitvector_map = db.getBitVectorMap(datasetPath, allSubspacesList) # returns :- {('sl', 'sw'): 3}
     
     
     # #CODE TO SORT DATASET
@@ -38,13 +41,16 @@ def getImage(datasetPath, selectedDimensions, orderingDimensions, orderingAlgori
     # print('Data sorted successfully')    
     
     #CODE TO ORDER MATRIX BASED ON SORTED DATA
-    original_order, new_order = op.getNewOrder(datasetPath, orderingDimensions, orderingAlgorithm)
+    original_order, new_order = op.getSortedOrder(datasetPath, orderingDimensions, orderingAlgorithm)
     matrix_map = mx.orderMatrix(matrix_map, new_order, original_order)
     
-        
     legend = db.getLegend(datasetPath) 
     
-    print('\t Legend fetched from database', legend)
+    legend = mx.filterLegend(legend, allSubspacesList)
+    
+    del legend['dataset']   
+    
+    print('\t Legend fetched from database\n', legend)
     #  Above returns
     # Legend fetched from database                      dataset  subspace        dimensions            color
     # 0   static/uploads/iris2.csv         1              [sl]    [51, 98, 107] 
@@ -58,7 +64,7 @@ def getImage(datasetPath, selectedDimensions, orderingDimensions, orderingAlgori
     
     consolidated_image = mx.consolidateImage(image_map)
     
-    return consolidated_image
+    return consolidated_image, legend, new_order
     # return matrix_map[tuple(subspaceList)]
 
 

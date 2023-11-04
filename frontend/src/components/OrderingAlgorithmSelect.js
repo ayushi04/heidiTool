@@ -6,7 +6,7 @@ const OrderingAlgorithmSelect = ({ onOrderingAlgorithmChange }) => {
   const [selectedOrderingAlgorithm, setSelectedOrderingAlgorithm] = useState('');
 
   // Ordering algorithm options
-  const allPossibleOrderingAlgorithm = ['Centroid Ordering', 'Option 2', 'Option 3', 'Option 4'];
+  const allPossibleOrderingAlgorithm = ['centroid_distance', 'knn_bfs', 'connected_distance', 'mst_distance', 'pca_ordering', 'tsne_ordering', 'dimension', 'nearest_to_all', 'euclidian_distance'];
   const orderingAlgorithmOptions = allPossibleOrderingAlgorithm.map((option) => ({
     value: option,
     label: option,

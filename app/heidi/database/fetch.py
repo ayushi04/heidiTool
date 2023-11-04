@@ -35,7 +35,6 @@ def getHeidiMatrixForSubspaceList(subspaceList, datasetObj):
     
     print('Bit vectors list : %s , for input subspaceList : %s fetched from database is' %(bit_vectors, subspaceList))
     matrix_map = getHeidiMatrixForBitVectorsList(bit_vectors, datasetObj)
-    print('matrix_map', matrix_map)
     subspace_matrix_map = {}
     for i in range(0,len(bit_vectors)):
         subspace = subspaceList[i]

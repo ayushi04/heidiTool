@@ -19,3 +19,6 @@ def consolidateImage(image_map):
 
 def orderMatrix(matrix_map, new_order, original_order):
     return matrix.orderMatrix(matrix_map, new_order, original_order)
+
+def filterLegend(legend_df, subspaceList):
+    return legend.filterLegend(legend_df, subspaceList)

@@ -14,3 +14,6 @@ def getAllSubspaces(dims):
 
 def getColumnNameListFromBitVector(bitVector, col, all_col_names):
     return sb.getColumnNameListFromBitVector(bitVector, col, all_col_names)
+
+def getAllSubspacesFromSelectedDimensionSet(all_col_names):
+    return sb.getAllSubspacesFromSelectedDimensionSet(all_col_names)

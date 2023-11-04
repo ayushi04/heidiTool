@@ -2,6 +2,12 @@ from app.heidi.matrix import constants
 from app.heidi.subspace.api import getAllSubspaces, getColumnNameListFromBitVector
 
 
+
+def filterLegend(legend_df, subspaceList):
+    # legend is dataframe with columns dataset, subspace, dimensions, color, get all rows where subspace is present in subspaceList
+    filtered_legend = legend_df[legend_df['dimensions'].isin(subspaceList)]
+    return filtered_legend
+
 def createLegend(datasetObj):
     legend = {}
     all_subspaces = getAllSubspaces(datasetObj.getNumberOfCols())

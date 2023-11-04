@@ -29,6 +29,11 @@ def getColumnNameListFromBitVector(bitVector, col, all_col_names):
     filtered_column_names = [all_col_names[i] for i in subspace_indexes]
     return filtered_column_names
 
+def getAllSubspacesFromSelectedDimensionSet(all_col_names):
+    allSubspaces = getAllSubspaces(len(all_col_names))
+    allSubspaces = [getColumnNameListFromBitVector(subspace, len(all_col_names), all_col_names) for subspace in allSubspaces]
+    return allSubspaces
+
 
 def subsets(s):
     t=[]

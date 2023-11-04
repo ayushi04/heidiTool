@@ -111,7 +111,7 @@ def orderPoints_nearest_to_all(trainingSet,point):
         trainingSet.loc[rownum,'pos']=count
         count+=1
         ##print(count)
-    trainingSet=trainingSet.sort_values(['pos'],ascending=['False'])
+    trainingSet=trainingSet.sort_values(['pos'],ascending=[False])
     trainingSet = trainingSet.drop('done', 1)
     trainingSet = trainingSet.drop('pos', 1)
     return trainingSet
@@ -125,7 +125,7 @@ def getDistances(allData,centroid):
         dist=distance.euclidean(allData.iloc[i,0:col-2],centroid)
         allData.iloc[i,-1]=dist
     #print(allData['distance'])
-    allData=allData.sort_values(['distance'],ascending=['False'])
+    allData=allData.sort_values(['distance'],ascending=[False])
     return allData
 
 #APPROACH 2: CONNECTED DISTANCE
@@ -144,7 +144,7 @@ def getConnectedDistances(trainingSet,point):
         point=trainingSet.loc[rownum,:].copy()
         point=point.iloc[0:col-2]
 
-    trainingSet=trainingSet.sort_values(['pos'],ascending=['False'])
+    trainingSet=trainingSet.sort_values(['pos'],ascending=[False])
     ##print (trainingSet)
 
     #del trainingSet['done']
@@ -189,7 +189,7 @@ def minSpanningTree(trainingSet,testInstance):
                 trainingSet.loc[k,'pos']=count#    distances=[]
                 count+=1
 
-    trainingSet=trainingSet.sort_values(['pos'],ascending=['False'])
+    trainingSet=trainingSet.sort_values(['pos'],ascending=[False])
     return trainingSet.iloc[:,0:col]
 
 '''
@@ -222,9 +222,10 @@ def orderPoints_pca(feature_vector,centroid):
     return minSpanningTree(proj,centroid)
     '''
     pca=PCA(n_components=1)
-    one_d_proj=pca.fit_transform(feature_vector)
+    one_d_proj=pca.fit_transform(feature_vector.iloc[:,:-2])
     feature_vector['one_d_proj']=one_d_proj
-    feature_vector=feature_vector.sort_values(['one_d_proj'],ascending=['False'])
+    feature_vector["one_d_proj"] = pd.to_numeric(feature_vector["one_d_proj"], downcast="float")
+    feature_vector=feature_vector.sort_values(['one_d_proj'],ascending=[False])
     del feature_vector['one_d_proj']
     return feature_vector
 
@@ -233,7 +234,7 @@ def orderPoints_tsne(feature_vector,centroid):
     tsne=TSNE(n_components=1)
     one_d_proj=tsne.fit_transform(feature_vector)
     feature_vector['one_d_proj']=one_d_proj
-    feature_vector=feature_vector.sort_values(['one_d_proj'],ascending=['False'])
+    feature_vector=feature_vector.sort_values(['one_d_proj'],ascending=[False])
     del feature_vector['one_d_proj']
     return feature_vector
 
@@ -242,7 +243,7 @@ def orderPoints_mds(feature_vector,centroid):
     mds=manifold.MDS(n_components=1, max_iter=100, n_init=1)
     one_d_proj=mds.fit_transform(feature_vector)
     feature_vector['one_d_proj']=one_d_proj
-    feature_vector=feature_vector.sort_values(['one_d_proj'],ascending=['False'])
+    feature_vector=feature_vector.sort_values(['one_d_proj'],ascending=[False])
     del feature_vector['one_d_proj']
     return feature_vector
 
@@ -250,7 +251,7 @@ def orderPoints_lle(feature_vector,centroid):
     lle=manifold.LocallyLinearEmbedding(n_components=1,eigen_solver='auto',method='standard')
     one_d_proj=lle.fit_transform(feature_vector)
     feature_vector['one_d_proj']=one_d_proj
-    feature_vector=feature_vector.sort_values(['one_d_proj'],ascending=['False'])
+    feature_vector=feature_vector.sort_values(['one_d_proj'],ascending=[False])
     del feature_vector['one_d_proj']
     return feature_vector
 
@@ -266,12 +267,12 @@ def sortbasedOnclassLabel(feature_vector,ordermeasure,param={}):
         x=feature_vector[feature_vector.classLabel==k].mean()
         x=x[0:-2]
         centroids[k]=x.values
-    # print('centroids are : ',centroids)
+    print('centroids are : ',centroids)
     sorted_data=pd.DataFrame()
     if(ordermeasure=='knn_bfs'):
         feature_vector['id'] = feature_vector.index
     for i in set(feature_vector.classLabel):
-        print('--ordering : ',i)
+        print('--ordering : ',i, ordermeasure)
         if(ordermeasure=='centroid_distance'):
             temp=getDistances(feature_vector[feature_vector.classLabel==i].copy(),centroids[i]).iloc[:,0:-1]
             sorted_data=pd.concat([sorted_data,temp])
@@ -311,10 +312,11 @@ def sortbasedOnclassLabel(feature_vector,ordermeasure,param={}):
 def order(filtered_data, orderingAlgorithm = "mst_distance"):
     filtered_data['classLabel_orig']=filtered_data['classLabel'].values
     
-    # IF ORDERDIM LENGTH =1 THEN ORDERING BY SORTED ORDER ELSE SOME OTHER ORDERING SCHEMA
+    # IF ORDERDIM LENGTH =1 THEN DO "DIMENSIOON" ORDERING, ELSE BASED ON INPUT ORDERING ALGORITHM
     noOfDims = filtered_data.shape[1] - 2
+    
     # print('nofdims : ',noOfDims)
-    if noOfDims ==1:
+    if noOfDims == 1:
         param={}
         param['columns']=list(filtered_data.columns[:-1])
         param['order']=[True for i in param['columns']]
@@ -370,7 +372,7 @@ if __name__=="__main__":
         trainingSet.loc[rownum,'pos']=count
         count+=1
 
-    trainingSet=trainingSet.sort_values(['pos'],ascending=['False'])
+    trainingSet=trainingSet.sort_values(['pos'],ascending=[False])
     trainingSet = trainingSet.drop('done', 1)
     trainingSet = trainingSet.drop('pos', 1)
     '''

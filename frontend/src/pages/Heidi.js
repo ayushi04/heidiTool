@@ -6,6 +6,7 @@ import { fetchColumns } from '../api';
 import OrderingAlgorithmSelect from '../components/OrderingAlgorithmSelect'; // Import the new component
 import SelectedDimensions from '../components/SelectedDimensions';
 import OrderingDimensions from '../components/OrderingDimensions';
+import Legend from '../components/Legend';
 import { getImage } from '../api'; // Import the API function
 
 const Heidi = () => {
@@ -15,6 +16,8 @@ const Heidi = () => {
   const datasetPath = searchParams.get('datasetPath');
   
   const [allPossibleDimensions, setAllPossibleDimensions] = useState([]);
+
+  const [legendData, setLegendData] = useState([]);
 
   const [imageSrc, setImageSrc] = useState(null);
   const [result, setResult] = useState(null);
@@ -68,6 +71,7 @@ const Heidi = () => {
         // Set the data URL as the image source
         // setImageSrc(dataUrl);
         setImageSrc(dataUrl);
+        setLegendData(result.legend);
       } else {
         // Handle other cases
         console.error('Error fetching image for dataset: ', datasetPath, ' with ordering algorithm: ', selectedOrderingAlgorithm, ' and ordering dimensions: ', selectedOrderingDimensions);
@@ -102,7 +106,7 @@ const Heidi = () => {
         <div style={{ flex: '0 0 20%' }}>
           <SelectedDimensions allPossibleDimensions={allPossibleDimensions} onSelectedDimensionsChange={handleDimensionsChange} />
         </div>
-        <div style={{ flex: '0 0 80%' }}>
+        <div style={{ flex: '0 0 60%' }}>
           <div style={{ flex: '1', marginRight: '10px' }}>
             {result && result.status === 'success' ? (
               <img src={imageSrc} alt="Image" />
@@ -116,6 +120,9 @@ const Heidi = () => {
               <p>{imageSrc.legend}</p>
             ) : null}
           </div>
+        </div>
+        <div style={{ flex: '0 0 20%' }}>
+        {legendData.length > 0 && <Legend legendData={legendData} />}
         </div>
       </div>
     </Container>

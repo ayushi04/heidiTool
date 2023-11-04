@@ -62,7 +62,7 @@ def heidi():
 
 
     print('Dataset path is ', datasetPath, 'in /image api call', 'orderingAlgorithm is ', orderingAlgorithm, 'orderingDimensions is ', orderingDimensions, 'selectedDimensions is ', selectedDimensions)
-    img = hd.getImage(datasetPath, selectedDimensions, orderingDimensions, orderingAlgorithm)
+    img, legend, sort_order = hd.getImage(datasetPath, selectedDimensions, orderingDimensions, orderingAlgorithm)
     
     # heidi_matrix = getHeidiMatrixForSubspaceList([selectedDimensions], datasetPath)
     
@@ -76,7 +76,9 @@ def heidi():
         'consolidated_image': {
             'data': base64.b64encode(img_bytes).decode('utf-8'),
             'content_type': 'image/png'
-        }
+        },
+        'sort_order': sort_order,
+        'legend': legend.to_dict(orient="records")
     }
 
     
