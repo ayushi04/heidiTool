@@ -1,7 +1,9 @@
 import pandas as pd
 import app.heidi.order.orderPoints as op
 import app.heidi.dataset.api as ds
+from app.utils.decorators import TimingDecorator
 
+@TimingDecorator
 def orderDataset(datasetPath, orderingDimensions, orderingAlgorithm):
     datasetObj = ds.readDataset(datasetPath)
     data = datasetObj.getInputData()
@@ -9,6 +11,7 @@ def orderDataset(datasetPath, orderingDimensions, orderingAlgorithm):
     sorted_data = op.order(filtered_data, orderingAlgorithm = "mst_distance")
     return sorted_data
 
+@TimingDecorator
 def getSortedOrder(datasetPath, orderingDimensions, orderingAlgorithm = "mst_distance"):
     datasetObj = ds.readDataset(datasetPath)
     data = datasetObj.getInputData()

@@ -43,19 +43,15 @@ def createMatrixForSubspace(datasetObj, subspace, knn = 10) :
     heidi_matrix=nbrs.kneighbors_graph(np_data).toarray()
     heidi_matrix=heidi_matrix.astype(np.uint64)
     return heidi_matrix
-    
+
 def orderMatrix(matrix_map, new_order, original_order):
     new_matrix_map = {}
-    for subspace in matrix_map:
-        matrix = matrix_map[subspace] 
-        new_matrix = np.zeros((matrix.shape[0],matrix.shape[0]))
-
-        #code to reshuffle matrix with order = original_order to updated value defined in sort_map
-        for i in range(matrix.shape[0]):
-            for j in range(matrix.shape[0]):
-                row = original_order.index(new_order[i]) #  finds the index of the new_order[i] element in the original_order list. 
-                col = original_order.index(new_order[j])
-                new_matrix[i][j] = matrix[row][col]
+    original_order_dict = {name: index for index, name in enumerate(original_order)}
+    reshuttle_index = [original_order_dict[value] for value in new_order]
+    for subspace, matrix in matrix_map.items():
+        # rows = [original_order_dict[value] for value in new_order]
+        # cols = [original_order_dict[value] for value in new_order]
+        new_matrix = matrix[np.ix_(reshuttle_index, reshuttle_index)]
         new_matrix_map[subspace] = new_matrix
 
     return new_matrix_map

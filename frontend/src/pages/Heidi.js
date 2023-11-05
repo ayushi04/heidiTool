@@ -8,6 +8,7 @@ import SelectedDimensions from '../components/SelectedDimensions';
 import OrderingDimensions from '../components/OrderingDimensions';
 import Legend from '../components/Legend';
 import { getImage } from '../api'; // Import the API function
+// import ImageZoom from 'rreact-medium-image-zoom';
 
 const Heidi = () => {
   // State
@@ -17,8 +18,8 @@ const Heidi = () => {
   
   const [allPossibleDimensions, setAllPossibleDimensions] = useState([]);
 
-  const [legendData, setLegendData] = useState([]);
-
+  // const [legendData, setLegendData] = useState([]);
+  const [loading, setLoading] = useState(false);
   const [imageSrc, setImageSrc] = useState(null);
   const [result, setResult] = useState(null);
   const [selectedDimensions, setSelectedDimensions] = useState([]);
@@ -53,6 +54,7 @@ const Heidi = () => {
   // Handle form submission
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setLoading(true);
     console.log('Selected Dimensions:', selectedDimensions);
     console.log('Selected Ordering Algorithm:', selectedOrderingAlgorithm);
     console.log('Selected Ordering Dimensions:', selectedOrderingDimensions);
@@ -71,7 +73,7 @@ const Heidi = () => {
         // Set the data URL as the image source
         // setImageSrc(dataUrl);
         setImageSrc(dataUrl);
-        setLegendData(result.legend);
+        // setLegendData(result.legend);
       } else {
         // Handle other cases
         console.error('Error fetching image for dataset: ', datasetPath, ' with ordering algorithm: ', selectedOrderingAlgorithm, ' and ordering dimensions: ', selectedOrderingDimensions);
@@ -81,6 +83,8 @@ const Heidi = () => {
       // Handle API request errors, e.g., display an error message
       console.error('Error fetching image for dataset: ', datasetPath, ' with ordering algorithm: ', selectedOrderingAlgorithm, ' and ordering dimensions: ', selectedOrderingDimensions);
       console.error('Error: ', error);
+    } finally {
+      setLoading(false); // Set loading back to false after the API response is received.
     }
   };
 
@@ -108,21 +112,26 @@ const Heidi = () => {
         </div>
         <div style={{ flex: '0 0 60%' }}>
           <div style={{ flex: '1', marginRight: '10px' }}>
-            {result && result.status === 'success' ? (
+            {loading ? (
+                <>
+                <p>Loading...</p>
+                <div className="loading-overlay">
+                  <div className="loading-animation"></div>
+                </div>
+                </>
+              ) :result && result.status === 'success' ? (
               <img src={imageSrc} alt="Image" />
-            ) : (
-              <p>No image available. Please select options and submit.</p>
-            )
+              // <ImageZoom image={{src: imageSrc, alt: 'Image', className: 'zoomable-image'}} zoomImage={{src: imageSrc,}} defaultScale={1} doubleClickToZoomIn />
+                ) : (
+                  <p>No image available. Please select options and submit.</p>
+                ) 
             }
-          </div>
-          <div style={{ flex: '1' }}>
-            {imageSrc && imageSrc.status === 'success' ? (
-              <p>{imageSrc.legend}</p>
-            ) : null}
           </div>
         </div>
         <div style={{ flex: '0 0 20%' }}>
-        {legendData.length > 0 && <Legend legendData={legendData} />}
+        {loading ? null : result && result.status === 'success' ? (
+              <p><Legend legendData={result.legend} /></p>
+        ) : null}
         </div>
       </div>
     </Container>

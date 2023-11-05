@@ -3,7 +3,6 @@ import React from 'react';
 const Legend = ({ legendData }) => {
     return (
         <div>
-        <h2>Legend</h2>
         <table>
           <thead>
             <tr>
