@@ -27,7 +27,6 @@ def createAndSaveMatrixToDB(datasetPath, knn=10):
     
     
 def getImage(datasetPath, selectedDimensions, orderingDimensions, orderingAlgorithm):
-    subspaceList = [selectedDimensions]
     allSubspacesList = sb.getAllSubspacesFromSelectedDimensionSet(selectedDimensions)
     print('allSubspaces are : %s for input selected dimesions : %s' %(allSubspacesList, selectedDimensions))
     
@@ -62,10 +61,36 @@ def getImage(datasetPath, selectedDimensions, orderingDimensions, orderingAlgori
     
     print('CREATED IMAGE MAP')
     
-    consolidated_image = mx.consolidateImage(image_map)
+    final_image = mx.stackAllImages(image_map)
     
-    return consolidated_image, legend, new_order
+    return final_image, legend, new_order
     # return matrix_map[tuple(subspaceList)]
+
+def getConsolidatedImage(datasetPath, selectedDimensions, orderingAlgorithm):
+    allSubspacesList = sb.getAllSubspacesFromSelectedDimensionSet(selectedDimensions)
+    print('allSubspaces are : %s for input selected dimesions : %s' %(allSubspacesList, selectedDimensions))
+    
+    matrix_map = db.getHeidiMatrixForSubspaceList(allSubspacesList, datasetPath) # returns :- {('sl', 'sw'): array([[1, 0, 0, ..., 0, 0, 0],
+    
+    sorted_matrix_map = {}
+    new_order_map = {}
+    for subspace in matrix_map:
+        orderingDimensions = list(subspace)
+        original_order, new_order = op.getSortedOrder(datasetPath, orderingDimensions, orderingAlgorithm)
+        updated_matrix = mx.orderMatrix({subspace: matrix_map[subspace]}, new_order, original_order)
+        sorted_matrix_map[subspace] = updated_matrix[subspace]
+        new_order_map[subspace] = new_order
+    legend = db.getLegend(datasetPath) 
+    legend = mx.filterLegend(legend, allSubspacesList)
+    del legend['dataset']   
+    image_map = mx.createImage(sorted_matrix_map, legend)
+    final_image = mx.stackAllImages(image_map)
+    final_image.save('static/output_image.png')
+    return final_image, legend, new_order_map
+
+        
+    
+
 
 
 

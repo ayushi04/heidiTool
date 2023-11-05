@@ -80,7 +80,30 @@ def heidi():
         'sort_order': sort_order,
         'legend': legend.to_dict(orient="records")
     }
+    return jsonify(response_data)
 
+@heidi_controller.route('/consolidated-image', methods=['POST'])
+def consolidated_heidi():
+    data = request.get_json()
+    datasetPath = data.get('datasetPath')
+    orderingAlgorithm = data.get('orderingAlgorithm')
+    selectedDimensions = data.get('selectedDimensions', [])  # This will also be a list of strings
+    print('Dataset path is ', datasetPath, 'in /image api call', 'orderingAlgorithm is ', orderingAlgorithm, 'selectedDimensions is ', selectedDimensions)
+    img, legend, sort_order = hd.getConsolidatedImage(datasetPath, selectedDimensions, orderingAlgorithm)
     
+    # Convert the PIL image to bytes
+    img_bytes = io.BytesIO()
+    img.save(img_bytes, format='PNG')
+    img_bytes = img_bytes.getvalue()
+    
+    response_data = {
+        'status': 'success',
+        'consolidated_image': {
+            'data': base64.b64encode(img_bytes).decode('utf-8'),
+            'content_type': 'image/png'
+        },
+        'sort_order': {},
+        'legend': legend.to_dict(orient="records")
+    }
     return jsonify(response_data)
 

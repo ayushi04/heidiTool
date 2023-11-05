@@ -20,8 +20,8 @@ def createMatrixForSubspace(datasetObj, subspace, knn = 10) :
 def createImage(matrix_map, legend):
     return image.createImage(matrix_map, legend)
 @TimingDecorator
-def consolidateImage(image_map):
-    return image.consolidateImage(image_map)
+def stackAllImages(image_map):
+    return image.stackAllImages(image_map)
 
 @TimingDecorator
 def orderMatrix(matrix_map, new_order, original_order):

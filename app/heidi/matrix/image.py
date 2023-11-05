@@ -45,7 +45,7 @@ def createImage(matrix_map, legend):
         color_matrix = color_matrix.astype(np.uint8)
         image = Image.fromarray(color_matrix)
         # Save the image to a file
-        image.save('static/output_image'+str(subspace)+'.png')
+        # image.save('static/output_image'+str(subspace)+'.png')
         image_map[subspace] = image
     return image_map
 
@@ -60,7 +60,7 @@ def createImage(matrix_map, legend):
 #             consolidateImage.paste(image, (0, 0))
 #     return consolidateImage
 
-def consolidateImage(image_map):
+def stackAllImages(image_map):
     consolidateImage = None
     for (subspace, image) in image_map.items():
         if consolidateImage is None:
