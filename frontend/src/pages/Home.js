@@ -2,13 +2,14 @@ import React, { useState } from 'react';
 import { uploadFile } from '../api'; // Import the API function
 // import { useHistory } from 'react-router-dom';
 import { useNavigate } from "react-router-dom";
-
+import LoadingOverlay from '../components/LoadingOverlay';
 
 function Home() {
   // const history = useHistory();
   const navigate = useNavigate();
   const [file, setFile] = useState(null);
   const [fixMethod, setFixMethod] = useState('skip');
+  const [loading, setLoading] = useState(false);
 
   const handleFileChange = (e) => {
     setFile(e.target.files[0]);
@@ -21,6 +22,7 @@ function Home() {
   
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setLoading(true);
 
     try {
       if (file) {
@@ -45,11 +47,16 @@ function Home() {
       // Handle API request errors, e.g., display an error message
       console.error('Upload error:', error);
     }
+    finally {
+      setLoading(false);
+    }
   };
 
   return (
     <div className="container">
       {/* Assuming you have imported Bootstrap CSS */}
+      
+      {loading && <LoadingOverlay />}
       
       <div className="row">
         <div className="col-md-4 col-sm-12">

@@ -8,6 +8,7 @@ import SelectedDimensions from '../components/SelectedDimensions';
 import OrderingDimensions from '../components/OrderingDimensions';
 import Legend from '../components/Legend';
 import { getImage } from '../api'; // Import the API function
+import LoadingOverlay from '../components/LoadingOverlay';
 // import ImageZoom from 'rreact-medium-image-zoom';
 
 const Heidi = () => {
@@ -115,9 +116,7 @@ const Heidi = () => {
             {loading ? (
                 <>
                 <p>Loading...</p>
-                <div className="loading-overlay">
-                  <div className="loading-animation"></div>
-                </div>
+                <LoadingOverlay />
                 </>
               ) :result && result.status === 'success' ? (
               <img src={imageSrc} alt="Image" />
