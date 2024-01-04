@@ -85,7 +85,7 @@ def getConsolidatedImage(datasetPath, selectedDimensions, orderingAlgorithm):
     del legend['dataset']   
     image_map = mx.createImage(sorted_matrix_map, legend)
     final_image = mx.stackAllImages(image_map)
-    final_image.save('static/output_image.png')
+    # final_image.save('static/output_image.png')
     return final_image, legend, new_order_map
 
         

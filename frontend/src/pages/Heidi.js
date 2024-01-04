@@ -10,6 +10,11 @@ import Legend from '../components/Legend';
 import { getImage, getConsolidatedImage } from '../api';
 import LoadingOverlay from '../components/LoadingOverlay';
 import Tab from '../components/Tab';
+import ZoomableImage from '../components/ZoomableImage'; // Import the ZoomableImage component
+import FirstThreeDPlot
+ from '../components/FirstThreeDPlot';
+// import { MapContainer, TileLayer, Marker } from 'react-leaflet';
+// import L from 'leaflet';
 
 const Heidi = () => {
   const location = useLocation();
@@ -18,12 +23,21 @@ const Heidi = () => {
   const [allPossibleDimensions, setAllPossibleDimensions] = useState([]);
   const [loading, setLoading] = useState(false);
   const [result, setResult] = useState(null);
-  const [activeTab, setActiveTab] = useState('consolidated');
+  const [activeTab, setActiveTab] = useState('image');
   const [imageSrc, setImageSrc] = useState(null);
+  const [sortOrder, setSortOrder] = useState(null);
   const [consolidatedImageSrc, setConsolidatedImageSrc] = useState(null);
   const [selectedDimensions, setSelectedDimensions] = useState([]);
   const [selectedOrderingAlgorithm, setSelectedOrderingAlgorithm] = useState('');
   const [selectedOrderingDimensions, setSelectedOrderingDimensions] = useState([]);
+
+  const dataset = [
+    { p: 'p1', x1: 0, y1: 0, x2: 0, y2: 0 },
+    { p: 'p2', x1: 0.1, y1: 0.1, x2: 0.3, y2: 0.5 },
+    { p: 'p3', x1: 0.5, y1: 0.1, x2: 0, y2: 0 },
+    // Add more rows as needed
+  ];
+
 
   useEffect(() => {
     const loadColumns = async () => {
@@ -54,12 +68,29 @@ const Heidi = () => {
   };
 
   const renderImage = () => (
-    <img src={imageSrc} alt="Image" />
+    // <img src={imageSrc} alt="Image" />
+    <ZoomableImage imageUrl={imageSrc} // Pass the base64 image data to ZoomableImage
+    onImageClick={handleImageClick} nOfpoints={sortOrder.length} />
   );
 
+  const handleImageClick = (x, y) => {
+    // Implement flood fill or other logic here
+    console.log(`Clicked at: (${x}, ${y})`);
+  };
+
   const renderConsolidatedImage = () => (
-    <img src={consolidatedImageSrc} alt="Consolidated Image" />
+    <div id="leafletMapConsolidated" style={{ height: '500px' }} />
   );
+
+  const renderLeafletMap = (mapId, imageUrl) => {
+    // const map = L.map(mapId).setView([0, 0], 2); // Set the initial view
+    // L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map); // Add OpenStreetMap as the base layer
+
+    // // Add the custom image overlay
+    // const bounds = [[-90, -180], [90, 180]]; // Define the bounds of the image
+    // const imageOverlay = L.imageOverlay(imageUrl, bounds).addTo(map);
+    // map.fitBounds(bounds); // Fit the map to the bounds of the image
+  };
 
   const renderLoading = () => (
     <>
@@ -91,6 +122,9 @@ const Heidi = () => {
         const contentType = result.consolidated_image.content_type;
         const dataUrl = `data:${contentType};base64,${imgData}`;
         setImageSrc(dataUrl);
+        // const nofPoints = result.sort_order.length;
+        setSortOrder(result.sort_order);
+
       } else {
         console.error('Error fetching image for dataset:', datasetPath, 'with ordering algorithm:', selectedOrderingAlgorithm, 'and ordering dimensions:', selectedOrderingDimensions);
         console.error('Error:', result.error);
@@ -103,6 +137,7 @@ const Heidi = () => {
         const contentType = consolidatedImageResult.consolidated_image.content_type;
         const dataUrl = `data:${contentType};base64,${imgData}`;
         setConsolidatedImageSrc(dataUrl);
+        renderLeafletMap('leafletMapConsolidated', dataUrl);
       } else {
         console.error('Error fetching consolidated image for dataset:', datasetPath, 'with ordering algorithm:', selectedOrderingAlgorithm, 'and ordering dimensions:', selectedOrderingDimensions);
         console.error('Error:', consolidatedImageResult.error);
@@ -164,6 +199,15 @@ const Heidi = () => {
             <p><Legend legendData={result.legend} /></p>
           ) : null}
         </div>
+      </div>
+      <div  style={{ display: 'flex', flexDirection: 'row', marginTop: '50px' }}>
+      <div style={{ flex: '0 0 20%' }}>
+      </div>
+      <div style={{ flex: '0 0 60%' }} id="yourContainer">
+        {/* <FirstThreeDPlot dataset={dataset} container={document.getElementById("3dplot")} width={500} height={500} /> */}
+        <FirstThreeDPlot dataset={dataset} container={document.getElementById('yourContainer')} width={1000} height={500} />
+    
+      </div>
       </div>
     </Container>
   );
