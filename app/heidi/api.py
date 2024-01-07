@@ -63,7 +63,7 @@ def getImage(datasetPath, selectedDimensions, orderingDimensions, orderingAlgori
     
     final_image = mx.stackAllImages(image_map)
     
-    return final_image, legend, new_order
+    return final_image, legend, new_order, matrix_map
     # return matrix_map[tuple(subspaceList)]
 
 def getConsolidatedImage(datasetPath, selectedDimensions, orderingAlgorithm):
@@ -86,10 +86,35 @@ def getConsolidatedImage(datasetPath, selectedDimensions, orderingAlgorithm):
     image_map = mx.createImage(sorted_matrix_map, legend)
     final_image = mx.stackAllImages(image_map)
     # final_image.save('static/output_image.png')
-    return final_image, legend, new_order_map
+    return final_image, legend, new_order_map, matrix_map
 
-        
-    
+
+def getPoints(datasetPath, matrixMap, rowPoint, colPoint):
+    # datasetObj = ds.readDataset(datasetPath)
+    rowPoint = int(rowPoint)
+    colPoint = int(colPoint)
+    subspaceList = mx.getSelectedPixel_subspaces(matrixMap, rowPoint, colPoint)
+    print('Subspace of pixel clicked:', subspaceList)
+    row_cluster, col_cluster = ds.getSelectedPixel_clusterId(rowPoint, colPoint, datasetPath)
+    print('Row cluster : ({}), Col cluster : ({})'.format(row_cluster, col_cluster))
+    bitvector_map = db.getBitVectorMap(datasetPath, subspaceList) # returns :- {('sl', 'sw'): 3}
+    allPoints = {}
+    for subspace in subspaceList:
+        subspace_bit_vector = bitvector_map[subspace]
+        df = db.getAllPointsInCluster(datasetPath, subspace_bit_vector, row_cluster, col_cluster)
+        allPoints[subspace] = df
+    return allPoints
+
+def createLegend(datasetPath):
+    """
+    Create a legend for the given dataset object.
+    Args:
+        datasetObj: The dataset object for which the legend is to be created.
+    Returns:
+        The created legend object.
+    """
+    datasetObj = ds.readDataset(datasetPath)
+    return mx.createLegend(datasetObj)
 
 
 

@@ -7,7 +7,7 @@ import OrderingAlgorithmSelect from '../components/OrderingAlgorithmSelect';
 import SelectedDimensions from '../components/SelectedDimensions';
 import OrderingDimensions from '../components/OrderingDimensions';
 import Legend from '../components/Legend';
-import { getImage, getConsolidatedImage } from '../api';
+import { getImage, getConsolidatedImage, getPoints } from '../api';
 import LoadingOverlay from '../components/LoadingOverlay';
 import Tab from '../components/Tab';
 import ZoomableImage from '../components/ZoomableImage'; // Import the ZoomableImage component
@@ -25,8 +25,11 @@ const Heidi = () => {
   const [result, setResult] = useState(null);
   const [activeTab, setActiveTab] = useState('image');
   const [imageSrc, setImageSrc] = useState(null);
+  const [imageData, setImageData] = useState(null);
+  const [matrixMap, setMatrixMap] = useState(null);
   const [sortOrder, setSortOrder] = useState(null);
   const [consolidatedImageSrc, setConsolidatedImageSrc] = useState(null);
+  const [consolidatedImageData, setConsolidatedImageData] = useState(null);
   const [selectedDimensions, setSelectedDimensions] = useState([]);
   const [selectedOrderingAlgorithm, setSelectedOrderingAlgorithm] = useState('');
   const [selectedOrderingDimensions, setSelectedOrderingDimensions] = useState([]);
@@ -73,24 +76,18 @@ const Heidi = () => {
     onImageClick={handleImageClick} nOfpoints={sortOrder.length} />
   );
 
-  const handleImageClick = (x, y) => {
+  const handleImageClick = async(x, y) => {
     // Implement flood fill or other logic here
     console.log(`Clicked at: (${x}, ${y})`);
+    console.log(`Point: (${sortOrder[x]}, ${sortOrder[y]})`);
+    console.log(sortOrder);
+    const result = await getPoints(datasetPath, selectedOrderingAlgorithm, selectedOrderingDimensions, selectedDimensions, matrixMap, x, y);
+
   };
 
   const renderConsolidatedImage = () => (
-    <div id="leafletMapConsolidated" style={{ height: '500px' }} />
+    <ZoomableImage imageUrl={imageSrc} onImageClick={handleImageClick} nOfpoints={sortOrder.length} />
   );
-
-  const renderLeafletMap = (mapId, imageUrl) => {
-    // const map = L.map(mapId).setView([0, 0], 2); // Set the initial view
-    // L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map); // Add OpenStreetMap as the base layer
-
-    // // Add the custom image overlay
-    // const bounds = [[-90, -180], [90, 180]]; // Define the bounds of the image
-    // const imageOverlay = L.imageOverlay(imageUrl, bounds).addTo(map);
-    // map.fitBounds(bounds); // Fit the map to the bounds of the image
-  };
 
   const renderLoading = () => (
     <>
@@ -118,10 +115,13 @@ const Heidi = () => {
       setResult(result);
 
       if (result.status === 'success') {
-        const imgData = result.consolidated_image.data;
-        const contentType = result.consolidated_image.content_type;
+        const imgData = result.image.data;
+        const contentType = result.image.content_type;
+        const matrixMap = result.matrix_map;
         const dataUrl = `data:${contentType};base64,${imgData}`;
         setImageSrc(dataUrl);
+        setImageData(imgData);
+        setMatrixMap(matrixMap);
         // const nofPoints = result.sort_order.length;
         setSortOrder(result.sort_order);
 
@@ -137,7 +137,8 @@ const Heidi = () => {
         const contentType = consolidatedImageResult.consolidated_image.content_type;
         const dataUrl = `data:${contentType};base64,${imgData}`;
         setConsolidatedImageSrc(dataUrl);
-        renderLeafletMap('leafletMapConsolidated', dataUrl);
+        setConsolidatedImageData(imgData);
+        
       } else {
         console.error('Error fetching consolidated image for dataset:', datasetPath, 'with ordering algorithm:', selectedOrderingAlgorithm, 'and ordering dimensions:', selectedOrderingDimensions);
         console.error('Error:', consolidatedImageResult.error);

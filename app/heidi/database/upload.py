@@ -15,13 +15,13 @@ def saveMatrixToDBForSubspace(datasetObj, subspace, knn):
     return True
 
 
-def saveMatrixToDB(heidi_matrix_map, datasetPath, knn = 10):
+def saveMatrixToDB(heidi_matrix_map, datasetObj, knn = 10):
     # If the dataset is already present in the db, remove all rows with that dataset
+    datasetPath = datasetObj.getDatasetPath()
     remove_all_rows_with_dataset(datasetPath)
-    
     for subspace in heidi_matrix_map:
         matrix = heidi_matrix_map[subspace]
-        save_matrix_to_db(matrix, subspace, datasetPath)
+        save_matrix_to_db(matrix, subspace, datasetObj)
 
     # Print that the matrix is saved for all subspaces.
     print("Matrix saved for all subspaces")

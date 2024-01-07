@@ -55,4 +55,13 @@ def orderMatrix(matrix_map, new_order, original_order):
         new_matrix_map[subspace] = new_matrix
 
     return new_matrix_map
-        
+
+def getSelectedPixel_subspaces(matrix_map, rowPoint, colPoint):
+    selectedPixel_subspaces = []
+    for subspace, matrix in matrix_map.items():
+        print(matrix.shape)
+        if matrix[rowPoint][colPoint] == 1:
+            selectedPixel_subspaces.append(subspace)
+    return selectedPixel_subspaces
+
+    

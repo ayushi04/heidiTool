@@ -66,7 +66,8 @@ def getColumns(datasetPath):
 #save matrix to database for all subspaces
 @TimingDecorator
 def saveMatrixToDB(heidi_matrix_map, datasetPath, knn = 10):
-    return upload.saveMatrixToDB(heidi_matrix_map, datasetPath, knn)
+    datasetObj = readDataset(datasetPath)
+    return upload.saveMatrixToDB(heidi_matrix_map, datasetObj, knn)
 
 # checked
 @TimingDecorator
@@ -78,4 +79,8 @@ def saveLegendToDB(legend, datasetObj):
 def saveDatasetToDB(datasetPath):
     datasetObj = readDataset(datasetPath)
     return upload.saveDatasetToDB(datasetObj)
+
+@TimingDecorator
+def getAllPointsInCluster(datasetPath, subspace, row_cluster, col_cluster):
+    return fetch.getAllPointsInCluster(datasetPath, subspace, row_cluster, col_cluster)
 

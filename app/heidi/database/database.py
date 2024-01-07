@@ -81,7 +81,8 @@ matrix - [[1 0 0 ... 0 0 0]
  [0 0 0 ... 1 1 1]
  [0 0 0 ... 0 0 1]]
 """
-def save_matrix_to_db(heidi_matrix,subspace, dataset):
+def save_matrix_to_db(heidi_matrix,subspace, datasetObj):
+    dataset = datasetObj.getDatasetPath()
     #for input matrix, get all tuple of row and column points, and their corresponding values
     #save these tuples, subspace and value to db where value is non-zero
     try:
@@ -89,7 +90,8 @@ def save_matrix_to_db(heidi_matrix,subspace, dataset):
             for j, value in enumerate(row):
                 if value != 0:
                     # Insert the data into the table
-                    db.session.add(HeidiMatrix(subspace=subspace, row_index=i, col_index=j, dataset=dataset, value=int(value)))
+                    # print(datasetObj.getClusterId(i), datasetObj.getClusterId(j))
+                    db.session.add(HeidiMatrix(subspace=subspace, row_index=i, col_index=j, row_point=datasetObj.getPointId(i), col_point=datasetObj.getPointId(j), row_cluster = datasetObj.getClusterId(i), col_cluster = datasetObj.getClusterId(j), dataset=dataset, value=int(value)))
         db.session.commit()
     except Exception as e:
         print(e)
@@ -192,7 +194,18 @@ def delete_legend_from_db(datasetObj):
         raise MyCustomException('failed to remove %s from Legend Table ' %(datasetName))
     return True
 
-
+def getAllPointsInClusterFromDB(datasetPath, subspace, row_cluster, col_cluster):
+    try:
+        points = HeidiMatrix.query.filter(HeidiMatrix.dataset == datasetPath, HeidiMatrix.subspace == subspace, HeidiMatrix.row_cluster == row_cluster, HeidiMatrix.col_cluster == col_cluster).all()
+        df = pd.DataFrame([{'row_point': item.row_point, 'col_point': item.col_point} for item in points])
+        print('got points in cluster from db')
+        return df
+    except Exception as e:
+        print(e)
+        db.session.rollback()
+        print('failed to get points in cluster from db')
+        return False
+    
 
         
         

@@ -67,6 +67,24 @@ export const getImage = async (datasetPath, orderingAlgorithm, orderingDimension
   
 }
 
+export const getPoints = async (datasetPath, orderingAlgorithm, orderingDimensions, selectedDimensions, matrixMap, rowPoint, colPoint) => {
+  const response = await axios.post(`${API_BASE_URL}/heidi/points`, {
+    datasetPath,
+    orderingAlgorithm, orderingDimensions, selectedDimensions,
+    // matrixMap,
+    rowPoint,
+    colPoint,
+  });
+  if (response.status === 200) {
+    // Handle successful response
+    return response.data;
+  } else {
+    // Handle error response
+    throw new Error('getPoints failed');
+  }
+
+}
+
 export const getConsolidatedImage = async(datasetPath, orderingAlgorithm, selectedDimensions) => {
   const response = await axios.post(`${API_BASE_URL}/heidi/consolidated-image`, {
     datasetPath,

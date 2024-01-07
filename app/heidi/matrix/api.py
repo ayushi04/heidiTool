@@ -19,6 +19,7 @@ def createMatrixForSubspace(datasetObj, subspace, knn = 10) :
 @TimingDecorator
 def createImage(matrix_map, legend):
     return image.createImage(matrix_map, legend)
+
 @TimingDecorator
 def stackAllImages(image_map):
     return image.stackAllImages(image_map)
@@ -30,3 +31,7 @@ def orderMatrix(matrix_map, new_order, original_order):
 @TimingDecorator
 def filterLegend(legend_df, subspaceList):
     return legend.filterLegend(legend_df, subspaceList)
+
+def getSelectedPixel_subspaces(matrix_map, rowPoint, colPoint):
+    return matrix.getSelectedPixel_subspaces(matrix_map, rowPoint, colPoint)
+

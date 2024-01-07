@@ -74,13 +74,21 @@ class HeidiMatrix(db.Model, UserMixin):
     subspace = db.Column(db.Integer,nullable=False)
     row_index = db.Column(db.Integer,nullable=False)
     col_index = db.Column(db.Integer,nullable=False)
+    row_point = db.Column(db.String(100),nullable=False)
+    col_point = db.Column(db.String(100),nullable=False)
+    row_cluster = db.Column(db.String(100),nullable=False)
+    col_cluster = db.Column(db.String(100),nullable=False)
     dataset = db.Column(db.String(100),nullable=False)
     value = db.Column(db.Integer,nullable=False)
 
-    def __init__(self, subspace="", row_index="", col_index="", dataset="", value=""):
+    def __init__(self, subspace="", row_index="", col_index="", row_point="", col_point="", row_cluster="", col_cluster="", dataset="", value=""):
         self.subspace = subspace
         self.row_index = row_index
         self.col_index = col_index
+        self.row_point = row_point
+        self.col_point = col_point
+        self.row_cluster = row_cluster
+        self.col_cluster = col_cluster
         self.value = value
         self.dataset = dataset
 

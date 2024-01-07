@@ -37,6 +37,16 @@ class ReadDatasetCls:
     
     def getDatasetPath(self):
         return self.datapath
+    
+    def getPointId(self,index):
+        return self.inputData.index[index]
+    
+    def getClusterId(self, index, index_type="iloc"):
+        if index_type == 'iloc':
+            indx = self.inputData.index[index]
+            return self.inputData.loc[indx]['classLabel']
+        return self.inputData.loc[index]['classLabel']
+        
 
     #METHOD TO SEPERATE CLASSLABEL FROM FEATURE_VECTOR IF IT EXISTS, OTHERWISE CREATE A CLASSLABEL DATAFRAME WITH '1' IN ALL ROWS
     def sep_fv_label(self,classlabel):
