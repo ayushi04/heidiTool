@@ -157,3 +157,24 @@ def getPoints():
         print(e)
         return jsonify({'error': 'Error in getting points : ' + str(e)}), 500
     
+
+@heidi_controller.route('/subspace-comparison-matrix', methods=['GET'])
+def getSubspaceOverlapMatrix():
+    print('>>>> HeidiController : getSubspaceOverlapMatrix called.... ')
+    data = request.args
+    datasetPath = data.get('datasetPath')
+    row_cluster = data.get('row_cluster')
+    col_cluster = data.get('col_cluster')
+    df = hd.getSubspaceOverlapMatrix(datasetPath, row_cluster, col_cluster)
+    print(df.shape, df.columns)
+    response_data = {
+                    'status': 'success',
+                    'data': df.to_dict(orient='records')
+                    }
+        
+    return response_data
+    
+    
+    
+    
+    

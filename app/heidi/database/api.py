@@ -81,6 +81,6 @@ def saveDatasetToDB(datasetPath):
     return upload.saveDatasetToDB(datasetObj)
 
 @TimingDecorator
-def getAllPointsInCluster(datasetPath, subspace, row_cluster, col_cluster):
-    return fetch.getAllPointsInCluster(datasetPath, subspace, row_cluster, col_cluster)
+def getAllPointsInCluster(datasetPath, row_cluster, col_cluster, subspace_bit_vector):
+    return fetch.getAllPointsInCluster(datasetPath, row_cluster, col_cluster, subspace_bit_vector)
 

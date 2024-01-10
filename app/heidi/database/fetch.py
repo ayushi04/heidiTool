@@ -74,6 +74,6 @@ def getMatrix(datasetPath, knn):
     return getHeidiMatrixForSubspaceList(all_subspaces, datasetObj)
     return get_matrix_from_db_for_bit_vector(datasetObj.getDatasetPath(), datasetObj.getRow(), all_subspaces)
     
-def getAllPointsInCluster(datasetPath, subspace, row_cluster, col_cluster):
-    return getAllPointsInClusterFromDB(datasetPath, subspace, row_cluster, col_cluster)
+def getAllPointsInCluster(datasetPath, row_cluster, col_cluster, subspace):
+    return getAllPointsInClusterFromDB(datasetPath, row_cluster, col_cluster, subspace)
     

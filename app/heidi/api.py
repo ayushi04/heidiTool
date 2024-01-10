@@ -101,9 +101,21 @@ def getPoints(datasetPath, matrixMap, rowPoint, colPoint):
     allPoints = {}
     for subspace in subspaceList:
         subspace_bit_vector = bitvector_map[subspace]
-        df = db.getAllPointsInCluster(datasetPath, subspace_bit_vector, row_cluster, col_cluster)
+        df = db.getAllPointsInCluster(datasetPath, row_cluster, col_cluster, subspace_bit_vector)
         allPoints[subspace] = df
     return allPoints
+
+def getSubspaceOverlapMatrix(datasetPath, row_cluster, col_cluster):
+    datasetObj = ds.readDataset(datasetPath)
+    subspaceList = sb.getAllSubspacesFromSelectedDimensionSet(db.getColumns(datasetPath))
+    bitvector_map = db.getBitVectorMap(datasetPath, subspaceList) # returns :- {('sl', 'sw'): 3}
+    print('For Dataset:{}, subspaceList is: {}, bitvector is: {}'.format(datasetPath, subspaceList, list(bitvector_map.values())))
+    df = db.getAllPointsInCluster(datasetPath, row_cluster, col_cluster, list(bitvector_map.values()))
+    reversed_bitvector_map = {value: key for key, value in bitvector_map.items()}
+    df['bitvector'] = df['subspace']
+    df['bitvector'] = [reversed_bitvector_map.get(i) for i in df['bitvector']]
+    return df
+    
 
 def createLegend(datasetPath):
     """

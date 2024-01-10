@@ -194,11 +194,19 @@ def delete_legend_from_db(datasetObj):
         raise MyCustomException('failed to remove %s from Legend Table ' %(datasetName))
     return True
 
-def getAllPointsInClusterFromDB(datasetPath, subspace, row_cluster, col_cluster):
+def getAllPointsInClusterFromDB(datasetPath, row_cluster, col_cluster, subspace = None):
     try:
-        points = HeidiMatrix.query.filter(HeidiMatrix.dataset == datasetPath, HeidiMatrix.subspace == subspace, HeidiMatrix.row_cluster == row_cluster, HeidiMatrix.col_cluster == col_cluster).all()
-        df = pd.DataFrame([{'row_point': item.row_point, 'col_point': item.col_point} for item in points])
-        print('got points in cluster from db')
+        print('DB Op: method: getAllPointsInClusterFromDB: Input : datasetPath : {}, row_cluster : {}, col_cluster : {}, subspace : {}'.format(datasetPath, row_cluster, col_cluster, subspace))
+        points = []
+        if subspace is None:
+            points = HeidiMatrix.query.filter(HeidiMatrix.dataset == datasetPath, HeidiMatrix.row_cluster == row_cluster, HeidiMatrix.col_cluster == col_cluster).all()
+        else:
+            #check if subspace is string make it list of string
+            if isinstance(subspace, str):
+                subspace = [subspace]
+            points = HeidiMatrix.query.filter(HeidiMatrix.dataset == datasetPath, HeidiMatrix.subspace.in_(subspace) , HeidiMatrix.row_cluster == row_cluster, HeidiMatrix.col_cluster == col_cluster).all()
+        df = pd.DataFrame([{'row_point': item.row_point, 'col_point': item.col_point, 'subspace': item.subspace} for item in points])
+        print('DB Op: {} points fetched from db for input row_cluster : {}, col_cluster : {}, subspace : {}'.format(len(df), row_cluster, col_cluster, subspace))
         return df
     except Exception as e:
         print(e)
