@@ -112,8 +112,9 @@ def getSubspaceOverlapMatrix(datasetPath, row_cluster, col_cluster):
     print('For Dataset:{}, subspaceList is: {}, bitvector is: {}'.format(datasetPath, subspaceList, list(bitvector_map.values())))
     df = db.getAllPointsInCluster(datasetPath, row_cluster, col_cluster, list(bitvector_map.values()))
     reversed_bitvector_map = {value: key for key, value in bitvector_map.items()}
-    df['bitvector'] = df['subspace']
-    df['bitvector'] = [reversed_bitvector_map.get(i) for i in df['bitvector']]
+    df['bitvector'] = df['subspace'].copy()
+    # del df['subspace']
+    df['subspace'] = [reversed_bitvector_map.get(i) for i in df['bitvector']]
     return df
     
 

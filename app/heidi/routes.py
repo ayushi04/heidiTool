@@ -1,5 +1,7 @@
 import json
+import os
 from flask import Blueprint, jsonify, request, Response
+from app import config
 
 from app.heidi.dataset.api import readDataset, getPointValue
 from app.heidi.database.api import saveMatrixToDB, saveDatasetToDB, getHeidiMatrixForSubspaceList, getColumns
@@ -171,7 +173,8 @@ def getSubspaceOverlapMatrix():
                     'status': 'success',
                     'data': df.to_dict(orient='records')
                     }
-        
+    filePath = os.path.join(config.Config.INTERMEDIATE_RESULT_DIR, 'subspace_overlap_matrix_{}'.format(datasetPath.split('/')[-1]))
+    df.to_csv(filePath, index=False)
     return response_data
     
     

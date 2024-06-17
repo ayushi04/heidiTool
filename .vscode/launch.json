@@ -1,0 +1,29 @@
+{
+    // Use IntelliSense to learn about possible attributes.
+    // Hover to view descriptions of existing attributes.
+    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Python: Current File",
+            "type": "python",
+            "request": "launch",
+            "program": "${file}",
+            "preLaunchTask": "Activate Virtual Environment",
+            "env": {
+                "PYTHONPATH": "/Users/ayushigupta/Desktop/github/tq/TOOL/ivat"
+              },
+            "console": "integratedTerminal",
+            "justMyCode": true
+        }
+    ],
+    "tasks": [
+        {
+          "label": "Activate Virtual Environment",
+          "type": "shell",
+          "command": "source",
+          "args": ["~/Desktop/github/TOOL/env/bin/activate"],
+          "problemMatcher": []
+        }
+    ]
+}

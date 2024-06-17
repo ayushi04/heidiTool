@@ -3,14 +3,14 @@
 
 import sys
 sys.path.insert(0, '/Users/ayushigupta/Desktop/github/tq/TOOL')
-
+sys.path.insert(0, '/Users/ayushigupta/Desktop/github/tq/TOOL/app')
 
 import math
 from itertools import combinations
 import pytest
 
 # Import the get_bit_map function from the code
-from app.mod_dim.helper.common import get_bit_map
+from heidi.helper.common import get_bit_map
 
 # Positive test case: Test with 1 dimension
 def test_get_bit_map_1_dimension():

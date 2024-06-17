@@ -8,4 +8,8 @@ frontend/package-lock.json
 tests/mod_dim/*
 tests/*
 app/static/output/*
+app/static/uploads/*
 app/app.db
+app/app.db
+app/app.db
+app/static/output_image.png

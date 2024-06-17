@@ -6,7 +6,7 @@ import sys
 sys.path.insert(0, '/Users/ayushigupta/Desktop/github/tq/TOOL')
 
 import pytest
-from app.mod_dim.helper.common import getSubspaceListFromBitVector
+from heidi.matrix.subspace import getSubspaceListFromBitVector
 
 # Positive test cases
 def test_getSubspaceListFromBitVector_positive():

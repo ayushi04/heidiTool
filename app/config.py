@@ -7,6 +7,7 @@ class Config:
     HOST = '0.0.0.0'
     BASE_DIR = os.getcwd()
     UPLOADS_DIR = os.path.join(BASE_DIR, 'static/uploads/')
+    INTERMEDIATE_RESULT_DIR = os.path.join(BASE_DIR, 'static/uploads/intermediate-result')
     STATIC_DIR = os.path.join(BASE_DIR, 'static/')
     SQLALCHEMY_DATABASE_URI = 'sqlite:///' + os.path.join(BASE_DIR, 'app.db')
     DATABASE_CONNECT_OPTIONS = {}
