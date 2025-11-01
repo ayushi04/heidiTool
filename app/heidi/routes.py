@@ -42,6 +42,7 @@ def create_heidi_matrix_route():
     except Exception as e:  
         return jsonify({"error": str(e)}), 500
 
+# Get list of all columns in the dataset passed as input parameter
 @heidi_controller.route('/columns', methods=['GET']) 
 def columns():
     datasetPath=request.args.get('datasetPath')
@@ -176,6 +177,23 @@ def getSubspaceOverlapMatrix():
     filePath = os.path.join(config.Config.INTERMEDIATE_RESULT_DIR, 'subspace_overlap_matrix_{}'.format(datasetPath.split('/')[-1]))
     df.to_csv(filePath, index=False)
     return response_data
+
+@heidi_controller.route('/subspace-summary', methods=['GET'])
+def getSubspaceOverlap():
+    print('>>>> HeidiController : getSubspaceOverlap called.... ')
+    data = request.args
+    datasetPath = data.get('datasetPath')
+    row_cluster = data.get('row_cluster')
+    col_cluster = data.get('col_cluster')
+    dimension = data.get('dimension')
+    summary_list = hd.getSubspaceOverlap(datasetPath, row_cluster, col_cluster, dimension)
+    response_data = {
+                    'status': 'success',
+                    'data': summary_list
+                    }
+    return response_data
+
+
     
     
     

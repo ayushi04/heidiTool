@@ -4,13 +4,14 @@ from app.heidi.dataset.api import readDataset
 from models import User
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_login import login_required, login_user, current_user, logout_user
+from werkzeug.utils import secure_filename
 import random
 import os
 import pandas as pd
 from config import DevelopmentConfig as config
 from mod_datacleaning import data_cleaning
 import app.heidi.api as hd
-import app.heidi.database.api as db
+import app.heidi.database.api as heidi_db
 from flask import jsonify
 import linecache
 import sys
@@ -88,43 +89,35 @@ def index():
 @mod_controllers.route('/upload', methods=['POST'])
 def upload():
     try:
-        file = request.files['file']
-        filename = file.filename
-        if filename=='':
+        file = request.files.get('file')
+        if not file or file.filename == '':
             raise ValueError('No file uploaded!!')
-        file_uploads_path = os.path.join(config.UPLOADS_DIR, filename)
-        file_static_path = os.path.join(config.STATIC_DIR, 'output')
-        file_static_path = os.path.join(file_static_path, filename)
-        file.save(file_uploads_path)
-        if (filename.rsplit('.', 1)[1].lower() == 'csv'):
-            dirty_file = pd.read_csv(file_uploads_path, sep=',')
-            res = data_cleaning.id_classLabel_check(dirty_file)
-            if(res!=True):
-                raise ValueError(res)
-            missing_val_fixed_file = data_cleaning.fix_missing(dirty_file, request.form['fix'])
-            cleaned_file = data_cleaning.clean(missing_val_fixed_file)
-            cleaned_file.to_csv(file_uploads_path, sep=',',index=False)
-        elif (filename.rsplit('.', 1)[1].lower() == 'tsv'):
-            dirty_file = pd.read_csv(file_uploads_path, sep='\t')
-            missing_val_fixed_file = data_cleaning.fix_missing(
-                dirty_file, request.form['fix'])
-            cleaned_file = data_cleaning.clean(missing_val_fixed_file)
-            cleaned_file.to_csv(file_uploads_path, sep=',',index=False)
-        elif (filename.rsplit('.', 1)[1].lower() == 'json'):
-            print (str(file_uploads_path))
-            dirty_file = pd.read_json(str(file_uploads_path))
-            missing_val_fixed_file = data_cleaning.fix_missing(
-                dirty_file, request.form['fix'])
-            cleaned_file = data_cleaning.clean(missing_val_fixed_file)
-            cleaned_file.to_json(file_uploads_path)
-        else:
+
+        filename = secure_filename(file.filename)
+        file_extension = filename.rsplit('.', 1)[-1].lower() if '.' in filename else ''
+        if file_extension not in {'csv', 'tsv', 'json'}:
             raise ValueError('Invalid file input! Please check the input file type')
+
+        os.makedirs(config.UPLOADS_DIR, exist_ok=True)
+        file_uploads_path = os.path.join(config.UPLOADS_DIR, filename)
+        file.save(file_uploads_path)
+
+        fix_method = request.form.get('fix', '')
+        dirty_file = _load_uploaded_dataframe(file_uploads_path, file_extension)
+
+        if file_extension == 'csv':
+            id_check = data_cleaning.id_classLabel_check(dirty_file)
+            if id_check is not True:
+                raise ValueError(id_check)
+
+        cleaned_file = _clean_uploaded_dataframe(dirty_file, fix_method)
+        _persist_cleaned_dataframe(cleaned_file, file_uploads_path, file_extension)
 
         download_path = 'static/uploads/' + filename
         
         robj = readDataset(download_path)
-        db.saveDatasetToDB(download_path)
-        hd.createAndSaveMatrixToDB(download_path, 10)
+        heidi_db.saveDatasetToDB(download_path)
+        hd.createAndSaveMatrixToDB(download_path, 5)
         response_data = {
             'status': 'success',
             'datasetPath': download_path,
@@ -137,9 +130,35 @@ def upload():
         # return render_template('first.html',title='visual tool',datasetPath=download_path, user=current_user)
     except Exception as e:
         print(e)
-        PrintException()
-        flash(PrintException())
+        error_message = PrintException()
+        flash(error_message)
         return render_template('index.html', user=current_user)
+
+
+def _load_uploaded_dataframe(file_path, extension):
+    if extension == 'csv':
+        return pd.read_csv(file_path, sep=',')
+    if extension == 'tsv':
+        return pd.read_csv(file_path, sep='\t')
+    if extension == 'json':
+        return pd.read_json(file_path)
+    raise ValueError('Unsupported file extension')
+
+
+def _clean_uploaded_dataframe(dataframe, fix_method):
+    """
+    Applies the cleaning pipeline to the uploaded dataset.
+    """
+    missing_val_fixed_file = data_cleaning.fix_missing(dataframe, fix_method)
+    return data_cleaning.clean(missing_val_fixed_file)
+
+
+def _persist_cleaned_dataframe(dataframe, destination_path, extension):
+    os.makedirs(os.path.dirname(destination_path), exist_ok=True)
+    if extension == 'json':
+        dataframe.to_json(destination_path)
+    else:
+        dataframe.to_csv(destination_path, sep=',', index=False)
 
 @mod_controllers.route('/contact', methods=['GET'])
 def contact():

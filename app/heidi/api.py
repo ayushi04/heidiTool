@@ -4,6 +4,7 @@ import app.heidi.subspace.api as sb
 import app.heidi.dataset.api as ds
 import app.heidi.matrix.api as mx
 import app.heidi.order.api as op
+import app.heidi.visualization.api as vis
 
 def createAndSaveMatrixToDB(datasetPath, knn=10):
     datasetObj = ds.readDataset(datasetPath)
@@ -85,7 +86,7 @@ def getConsolidatedImage(datasetPath, selectedDimensions, orderingAlgorithm):
     del legend['dataset']   
     image_map = mx.createImage(sorted_matrix_map, legend)
     final_image = mx.stackAllImages(image_map)
-    # final_image.save('static/output_image.png')
+    final_image.save('static/output_image.png')
     return final_image, legend, new_order_map, matrix_map
 
 
@@ -115,8 +116,28 @@ def getSubspaceOverlapMatrix(datasetPath, row_cluster, col_cluster):
     df['bitvector'] = df['subspace'].copy()
     # del df['subspace']
     df['subspace'] = [reversed_bitvector_map.get(i) for i in df['bitvector']]
-    return df
-    
+    return df    
+
+def getSubspaceOverlapMatrixForSelectedDimension(datasetPath, row_cluster, col_cluster, dimension):
+    datasetObj = ds.readDataset(datasetPath)
+    subspaceList = sb.getAllSubspacesFromSelectedDimensionSet(db.getColumns(datasetPath))
+    subspaceList = [subspace for subspace in subspaceList if dimension in subspace]
+    bitvector_map = db.getBitVectorMap(datasetPath, subspaceList) # returns :- {('sl', 'sw'): 3}
+    print('For Dataset:{}, subspaceList is: {}, bitvector is: {}'.format(datasetPath, subspaceList, list(bitvector_map.values())))
+    df = db.getAllPointsInCluster(datasetPath, row_cluster, col_cluster, list(bitvector_map.values()))
+    reversed_bitvector_map = {value: key for key, value in bitvector_map.items()}
+    df['bitvector'] = df['subspace'].copy()
+    # del df['subspace']
+    df['subspace'] = [reversed_bitvector_map.get(i) for i in df['bitvector']]
+    return df    
+
+
+def getSubspaceOverlap(datasetPath, row_cluster, col_cluster, dimension):
+    row_cluster=1.0
+    col_cluster=0.0
+    df_matrix = getSubspaceOverlapMatrixForSelectedDimension(datasetPath, row_cluster, col_cluster)
+    summary_list = vis.getSubspaceOverlapSummary(datasetPath, df_matrix)
+    return summary_list
 
 def createLegend(datasetPath):
     """
@@ -128,6 +149,7 @@ def createLegend(datasetPath):
     """
     datasetObj = ds.readDataset(datasetPath)
     return mx.createLegend(datasetObj)
+
 
 
 
