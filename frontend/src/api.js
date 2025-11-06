@@ -45,6 +45,27 @@ export const fetchColumns = async (datasetPath) => {
   
 };
 
+export const fetchSubspaceSummary  = async (datasetPath, rowClusterId, columnClusterId) => {
+  const dimension= 'monthly_income';
+  const url = `${API_BASE_URL}/heidi/subspace-summary?datasetPath=${datasetPath}&row_cluster=${rowClusterId}&col_cluster=${columnClusterId}`;
+  const response = await axios.get(`${API_BASE_URL}/heidi/subspace-summary?datasetPath=${datasetPath}&row_cluster=${rowClusterId}&col_cluster=${columnClusterId}&dimension=${dimension}`, {
+    
+    headers: {
+      'Content-Type': 'multipart/form-data',
+    },
+  });
+
+  if (response.status === 200) {
+    // Handle successful response
+    return response.data;
+  } else {
+    // Handle error response
+    throw new Error('Upload failed');
+  }
+  
+};
+
+
 export const getImage = async (datasetPath, orderingAlgorithm, orderingDimensions, selectedDimensions) => {
   // const response = await axios.get(`${API_BASE_URL}/heidi/image?datasetPath=${datasetPath}&orderingAlgorithm=${orderingAlgorithm}&orderingDimensions=${orderingDimensions}&selectedDimensions=${selectedDimensions}`, {
   //   headers: {

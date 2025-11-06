@@ -1,0 +1,37 @@
+.arc path {
+    stroke: #8e3333;
+    stroke-width: 2px;
+}
+
+.label {
+    font-family: Arial, sans-serif;
+    font-size: 16px;
+}
+
+.legend {
+    font-size: 14px;
+    font-family: Arial, sans-serif;
+}
+
+/* .x-pattern {
+    fill: url(#xPattern);
+}
+
+.y-pattern {
+    fill: url(#yPattern);
+}
+
+.xy-pattern {
+    fill: url(#xyPattern);
+} */
+
+/* New CSS for Only Y points */
+.only-y-pattern {
+    fill: url(#onlyYPattern); /* Reference the pattern created in SVG */
+}
+
+/* Optional: Customize the stroke and other visual properties for "Only Y" */
+.arc.only-y path {
+    stroke: #8e8d33;
+    stroke-width: 2px;
+}   

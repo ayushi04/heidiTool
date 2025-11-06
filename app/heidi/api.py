@@ -135,7 +135,7 @@ def getSubspaceOverlapMatrixForSelectedDimension(datasetPath, row_cluster, col_c
 def getSubspaceOverlap(datasetPath, row_cluster, col_cluster, dimension):
     row_cluster=1.0
     col_cluster=0.0
-    df_matrix = getSubspaceOverlapMatrixForSelectedDimension(datasetPath, row_cluster, col_cluster)
+    df_matrix = getSubspaceOverlapMatrixForSelectedDimension(datasetPath, row_cluster, col_cluster, dimension)
     summary_list = vis.getSubspaceOverlapSummary(datasetPath, df_matrix)
     return summary_list
 

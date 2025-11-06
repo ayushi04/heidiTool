@@ -9,6 +9,7 @@ import ColumnsDisplay  from './components/ColumnsDisplay';
 import Heidi  from './pages/Heidi';
 import ThreeDPlot from './components/ThreeDPlot';
 import FirstThreeDPlot from './components/FirstThreeDPlot';
+import Graph from './pages/Graph';
 
 function App() {
   return (
@@ -22,6 +23,7 @@ function App() {
             {/* <Route exact path="/plot" element={<ThreeDPlot />} /> */}
             <Route exact path="/plot" element={<FirstThreeDPlot />} />
             <Route exact path="/" element={<Home />} />
+            <Route exact path="/graph" element={<Graph />} />
             {/* <Route path="/contact" component={Contact} /> */}
             {/* Add more routes for other pages */}
           </Routes>
